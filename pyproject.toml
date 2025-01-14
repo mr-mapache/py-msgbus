@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "pymsgbus"
+version = "0.1.0"
+description = "A lightweight libary for event driven systems."
+authors = ["mr-mapache <eric.m.cardozo@mi.unc.edu.ar>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fast-depends = "^2.4.12"
+
+
+[tool.poetry.group.tests.dependencies]
+pytest = "^8.3.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
