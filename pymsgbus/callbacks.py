@@ -2,21 +2,19 @@ from typing import Callable
 from typing import Iterator
 from typing import Any
 
-class Callbacks[T: Callable]:
+class Callback[T: Callable]:
     """
     Callbacks is a class that manages a group of callback objects. It is responsible for
     calling the callback objects and returning their results.
 
     Args:
-        *callbacks: A sequence of callback objects.
+        callbacks: A sequence of callback objects.
 
     Example:
 
         .. code-block:: python
-        class Flushable:
-            ## Supose for example that you need to implement a flush method in all callbacks
-            ## you pass to a function that will call a callback
 
+        class Flushable:
             def flush(self):
                 print(f'flushing')
                         
@@ -28,15 +26,13 @@ class Callbacks[T: Callable]:
             def __call__(self, *args, **kwargs) -> Any:
                 return kwargs
 
-        # Create an instance of Callbacks with generic type Flushable
-        callbacks = Callbacks[Flushable](SomeCallback(), OtherCallback())
+        callbacks = Callbacks(SomeCallback(), OtherCallback())
 
         for result in callbacks(1, 2, 3, a=4, b=5, c=6):
-            print(result) # (1, 2, 3) 
-                          # {'a': 4, 'b': 5, 'c': 6} 
+            print(result)
             
         for callback in callbacks:
-            callback.flush() # type hinting will work here
+            callback.flush()
     """
 
     def __init__(self, *callbacks: T):

@@ -1,0 +1,19 @@
+site_name: "pymsgbus"
+
+theme:
+  name: "readthedocs"
+
+nav:
+  - Home: index.md
+  - Events: events.md
+  - Pubsub: pubsub.md
+  - Services: services.md
+  - Callbacks: callbacks.md
+  - Types: types.md
+
+plugins:
+  - mkdocstrings:
+      handlers:
+        python:
+          selection:
+            docstring_style: "google"  # or "restructuredtext"

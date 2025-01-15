@@ -3,13 +3,13 @@ on:
   push:
     paths:
       - '**/*.py'  
-      - 'pysignal/**' 
+      - 'pymsgbus/**' 
       - 'tests/**' 
       
   pull_request:
     paths:
       - '**/*.py' 
-      - 'pysignal/**'   
+      - 'pymsgbus/**'   
       - 'tests/**'   
 jobs:
   tests:

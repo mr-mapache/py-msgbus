@@ -1,4 +1,4 @@
-from pymsgbus.messages import Publisher, Subscriber, Depends
+from pymsgbus.publisher import Publisher, Subscriber, Depends
 
 subscriber = Subscriber()
 nfs = []

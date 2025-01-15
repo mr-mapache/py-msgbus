@@ -1,4 +1,4 @@
-from pymsgbus.callbacks import Callbacks
+from pymsgbus.callbacks import Callback
 
 class Flushable:
     def flush(self):
@@ -12,7 +12,7 @@ class OtherCallback(Flushable):
     def __call__(self, *args, **kwargs):
         return kwargs
 
-callbacks = Callbacks[Flushable](SomeCallback(), OtherCallback())
+callbacks = Callback[Flushable](SomeCallback(), OtherCallback())
 
 def test_callbacks():
     results = callbacks(1, 2, 3, a=4, b=5, c=6)

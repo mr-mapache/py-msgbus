@@ -72,8 +72,6 @@ def test_sessions():
     assert resource.closed == True
     assert resource.count == 2
     assert resource.rolledback == False
-
-
     
     resource = UOW()
     with Session(resource) as session:

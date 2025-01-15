@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pymsgbus"
-version = "0.1.0"
+version = "0.1.2"
 description = "A lightweight libary for event driven systems."
 authors = ["mr-mapache <eric.m.cardozo@mi.unc.edu.ar>"]
 license = "MIT"
@@ -13,6 +13,11 @@ fast-depends = "^2.4.12"
 
 [tool.poetry.group.tests.dependencies]
 pytest = "^8.3.4"
+
+
+
+[tool.poetry.group.docs.dependencies]
+mkdocstrings-python = "^1.13.0"
 
 [build-system]
 requires = ["poetry-core"]

@@ -113,16 +113,16 @@ class Session:
             resource.begin()
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(self, exc_type, exc_value, traceback) -> bool:
         """
         Handles the session's lifecycle, including invoking exception handlers if an exception occurs.
         if a handler exists for the exception type, non exception will be raised else the exception will be raised.
         if the exception handler returns True, the transaction will be committed, otherwise it will be rolled back.
 
         Args:
-            exc_type: The type of the exception raised.
-            exc_value: The exception instance raised.
-            traceback: The traceback object.
+            exc_type (Any): The type of the exception raised.
+            exc_value (Any): The exception instance raised.
+            traceback (Any): The traceback object.
 
         """
         if exc_type:

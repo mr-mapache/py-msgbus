@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pymsgbus import Depends
-from pymsgbus.events import Producer, Event, Consumer
+from pymsgbus.producer import Producer, Consumer
 
 @dataclass
 class UserCreated:
