@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Types - pymsgbus</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Types";
+        var mkdocs_page_input_path = "types.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> pymsgbus
+        </a>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../events/">Events</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../pubsub/">Pubsub</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../services/">Services</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../callbacks/">Callbacks</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Types</a>
+    <ul class="current">
+    </ul>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">pymsgbus</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Types</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h3 id="types-of-messages">Types of messages</h3>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="pymsgbus.models"></a>
+    <div class="doc doc-contents first">
+
+        <p>This module defines the core types used in the library. These types are mean to be optionally
+subclassed and serve as a reference in definitions and writting self-documented code.</p>
+<p>The types defined in this module are:</p>
+<ul>
+<li>Message: Represents the intention of transmitting information from within an AGGREGATE to the outside of the BOUNDED CONTEXT.</li>
+<li>Event: Represents a significant occurrence that happens within a system's BOUNDED CONTEXT.</li>
+<li>Command: Represents a directive to perform a specific action or mutation withing an AGGREGATE.</li>
+<li>Query: Represents a request for information or data from a system's BOUNDED CONTEXT.</li>
+</ul>
+<p>These types are intended to be subclassed to define concrete message types with the required.</p>
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pymsgbus.models.Command" class="doc doc-heading">
+            <code>Command</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>A COMMAND is a directive to perform a specific action or operation in a system.</p>
+<p>Commands represent an intent to change the state of the system. Unlike events, commands
+are direct requests for actions or mutations on an AGGREGATE to be taken and are
+typically processed by a single recipient, and they belong to the service layer.</p>
+<p>This class is intended to be subclassed to define concrete command types with the
+required attributes.</p>
+<p>Example:</p>
+<pre><code>.. code-block:: python
+
+class CreateUserCommand(Command): # Could be a dataclass as well or anything
+    def __init__(self, user_id: str, name: str):
+        self.user_id = user_id
+        self.name = name
+
+    def __repr__(self):
+        return f"CreateUserCommand(user_id={self.user_id}, name={self.name})"
+</code></pre>
+
+
+
+
+
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pymsgbus.models.Event" class="doc doc-heading">
+            <code>Event</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>An EVENT is a significant occurrence that happens within a system's BOUNDED CONTEXT.</p>
+<p>Events are immutable facts that represent a change in state or a notification of
+an action. They are used to signal that something noteworthy has occurred, enabling
+other parts of the system or external systems to react accordingly.</p>
+<p>This class is intended to be subclassed to define concrete event types with the
+required attributes.</p>
+<p>Example:</p>
+<pre><code>.. code-block:: python
+
+class OrderPlacedEvent(Event): # Could be a dataclass as well or anything
+    def __init__(self, order_id: str, user_id: str, total_amount: float):
+        self.order_id = order_id
+        self.user_id = user_id
+        self.total_amount = total_amount
+
+    def __repr__(self):
+        return f"OrderPlacedEvent(order_id={self.order_id}, user_id={self.user_id}, total_amount={self.total_amount})"
+</code></pre>
+
+
+
+
+
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pymsgbus.models.Message" class="doc doc-heading">
+            <code>Message</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>A MESSAGE represents the intention of transmitting information from within an Aggregate
+to the outside of the BOUNDED CONTEXT.</p>
+<p>It serves as a base class for defining various types of messages, such as events,
+commands, and queries, which facilitate communication in a distributed system.</p>
+<p>Subclass this class to define concrete message types with the required attributes.</p>
+<p>Example:</p>
+<pre><code>.. code-block:: python
+from dataclasses import dataclass
+
+@dataclass(slots=True) #just and example can be a normal class
+class Metric(Message):
+    name: str
+    value: float
+</code></pre>
+
+
+
+
+
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pymsgbus.models.Query" class="doc doc-heading">
+            <code>Query</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>A QUERY is a request for information or data from a system's BOUNDED CONTEXT.</p>
+<p>Queries do not modify the state of the system; they are read-only operations intended
+to retrieve the current state or computed results based on the state of the system.</p>
+<p>This class is intended to be subclassed to define concrete query types with the
+required attributes.</p>
+<p>Example:</p>
+<pre><code>.. code-block:: python
+
+class GetUserQuery(Query): # Could be a dataclass as well or anything
+    def __init__(self, user_id: str):
+        self.user_id = user_id
+
+    def __repr__(self):
+        return f"GetUserQuery(user_id={self.user_id})"
+</code></pre>
+
+
+
+
+
+
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../callbacks/" class="btn btn-neutral float-left" title="Callbacks"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../callbacks/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

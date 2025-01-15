@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Services - pymsgbus</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Services";
+        var mkdocs_page_input_path = "services.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> pymsgbus
+        </a>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../events/">Events</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../pubsub/">Pubsub</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Services</a>
+    <ul class="current">
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../callbacks/">Callbacks</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../types/">Types</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">pymsgbus</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Services</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h3 id="modeling-the-service-layer-with-commands-and-queries">Modeling the service layer with commands and queries.</h3>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="pymsgbus.service"></a>
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pymsgbus.service.Service" class="doc doc-heading">
+            <code>Service</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>A SERVICE is the technical authority for a business capability. And it is the exclusive
+owner of a certain subset of the business data.  It centralizes and organizes domain
+operations, enforces business rules, and coordinates workflows. </p>
+
+
+<p><span class="doc-section-title">Methods:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><span title="pymsgbus.service.Service.register">register</span></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Registers a handler for a specific command or query type. Handles nested or generic annotations.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.service.Service.handler" href="#pymsgbus.service.Service.handler">handler</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Callable[..., None | Any]) -&gt; Callable[..., None | Any]:
+Decorator for registering a function as a handler for a command or query type.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.service.Service.execute" href="#pymsgbus.service.Service.execute">execute</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Command | Query) -&gt; None | Any:
+Executes the handler associated with the given command or query.</p>
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
+        <p>Example:</p>
+<pre><code>.. code-block:: python
+from dataclasses import dataclass
+from pymsgbus import Service
+from pymsgbus.models import Command, Query
+
+@dataclass
+class CreateUser(Command):
+    id: str
+    name: str
+
+@dataclass
+class UpdateUser(Command):
+    id: str
+    name: str
+
+@dataclass
+class QueryUser(Query):
+    id: str
+
+@dataclass
+class User:
+    id: str
+    name: str
+
+service = Service() # Define a new service
+db = {}
+
+@service.handler
+def handle_put_user(command: CreateUser[str] | UpdateUser):
+    db[command.id] = command.name
+
+@service.handler
+def handle_query_user(query: QueryUser) -&gt; User: # Performs pydantic validation
+    return User(id=query.id, name=db.get(query.id))
+
+service.execute(CreateUser(id='1', name='Alice'))
+service.execute(UpdateUser(id='1', name='Bob'))
+user = service.execute(QueryUser(id='1'))
+assert user.name == 'Bob'
+assert user.id == '1'
+</code></pre>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.service.Service.execute" class="doc doc-heading">
+            <code class="highlight language-python">execute(request)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Executes the handler associated with the given command or query.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>request</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="pymsgbus.models.Command" href="../types/#pymsgbus.models.Command">Command</a> | <a class="autorefs autorefs-internal" title="pymsgbus.models.Query" href="../types/#pymsgbus.models.Query">Query</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>The command or query to be processed.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code>None | <span title="typing.Any">Any</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The result of the handler function, if any.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code>ValueError</code>
+              –
+              <div class="doc-md-description">
+                <p>If no handler is registered for the given command or query type.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.service.Service.handler" class="doc doc-heading">
+            <code class="highlight language-python">handler(wrapped)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Decorator for registering a function as a handler for a command or query type.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>wrapped</code></b>
+                  (<code><span title="typing.Callable">Callable</span>[..., None | <span title="typing.Any">Any</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The function to be registered as a handler.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Callable">Callable</span>[..., None | <span title="typing.Any">Any</span>]</code>
+              –
+              <div class="doc-md-description">
+                <p>The original function, unmodified.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="pymsgbus.session"></a>
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pymsgbus.session.Resource" class="doc doc-heading">
+            <code>Resource</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="typing.Protocol">Protocol</span></code></p>
+
+
+        <p>Represents an interface (Protocol) for resources. Resources are objects that can handle
+transactions and provide access to data or services.</p>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.session.Resource.begin" class="doc doc-heading">
+            <code class="highlight language-python">begin()</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Begins a transaction. This method should be called before any other
+transactional methods are invoked.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.session.Resource.close" class="doc doc-heading">
+            <code class="highlight language-python">close()</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Closes the resource. This method should be called after all transactions
+have been completed.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.session.Resource.commit" class="doc doc-heading">
+            <code class="highlight language-python">commit()</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Commits the current transaction. This method should be called after all
+transactional methods have been invoked successfully.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.session.Resource.rollback" class="doc doc-heading">
+            <code class="highlight language-python">rollback()</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Rolls back the current transaction. This method should be called if an
+error occurs during the transaction.</p>
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pymsgbus.session.Session" class="doc doc-heading">
+            <code>Session</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>Represents a session for managing transactions with a resource. Sessions are used
+to group multiple operations into a single transaction that can be committed or
+rolled back as a unit.</p>
+<p>Custom exception handlers can be registered to handle specific exceptions that
+occur during the session to avoid rolling back the transaction. This is useful
+for example for early stopping in loops.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>*args</code></b>
+              –
+              <div class="doc-md-description">
+                <p>Variable length argument list with resource instances. </p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p><span class="doc-section-title">Methods:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><span title="pymsgbus.session.Session.begin">begin</span></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Begins a transaction with the resource.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.session.Session.commit" href="#pymsgbus.session.Session.commit">commit</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Commits the current transaction with the resource.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.session.Session.rollback" href="#pymsgbus.session.Session.rollback">rollback</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Rolls back the current transaction with the resource.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><span title="pymsgbus.session.Session.close">close</span></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Closes the session and releases the resource.</p>
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
+        <p>Example:</p>
+<pre><code>.. code-block:: python
+
+from pybondi import Session
+
+with Session(repository, publisher, logger) as session:
+    repository.add(model)
+    publisher.publish(event)
+    session.commit() # Session will commit all resources
+
+    repository.add(another_model)
+    raise Exception("Something went wrong") # Session will rollback all resources
+                                            # to the state where it was committed
+</code></pre>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.session.Session.__enter__" class="doc doc-heading">
+            <code class="highlight language-python">__enter__()</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Begins a transaction with the resource. This method should be called</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.session.Session.__exit__" class="doc doc-heading">
+            <code class="highlight language-python">__exit__(exc_type, exc_value, traceback)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Handles the session's lifecycle, including invoking exception handlers if an exception occurs.
+if a handler exists for the exception type, non exception will be raised else the exception will be raised.
+if the exception handler returns True, the transaction will be committed, otherwise it will be rolled back.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>exc_type</code></b>
+                  (<code>Any</code>)
+              –
+              <div class="doc-md-description">
+                <p>The type of the exception raised.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>exc_value</code></b>
+                  (<code>Any</code>)
+              –
+              <div class="doc-md-description">
+                <p>The exception instance raised.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>traceback</code></b>
+                  (<code>Any</code>)
+              –
+              <div class="doc-md-description">
+                <p>The traceback object.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.session.Session.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(*args)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Initializes a new session with the given resources.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>*args</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="pymsgbus.session.Resource" href="#pymsgbus.session.Resource">Resource</a></code>, default:
+                      <code>()</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Variable length argument list with resource instances.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.session.Session.commit" class="doc doc-heading">
+            <code class="highlight language-python">commit()</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Commits the current transaction with the resource.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.session.Session.on" class="doc doc-heading">
+            <code class="highlight language-python">on(exception)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Registers an exception handler for the given exception type.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>exception</code></b>
+                  (<code>type[BaseException]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The type of exception to handle.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              –
+              <div class="doc-md-description">
+                <p>A decorator that registers the exception handler.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.session.Session.rollback" class="doc doc-heading">
+            <code class="highlight language-python">rollback()</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Rolls back the current transaction with the resource.</p>
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../pubsub/" class="btn btn-neutral float-left" title="Pubsub"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../callbacks/" class="btn btn-neutral float-right" title="Callbacks">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../pubsub/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../callbacks/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

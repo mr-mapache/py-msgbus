@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Events - pymsgbus</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Events";
+        var mkdocs_page_input_path = "events.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> pymsgbus
+        </a>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Events</a>
+    <ul class="current">
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../pubsub/">Pubsub</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../services/">Services</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../callbacks/">Callbacks</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../types/">Types</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">pymsgbus</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Events</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h3 id="modeling-domains-with-events-and-the-producerconsumer-pattern">Modeling domains with events, and the producer/consumer pattern.</h3>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="pymsgbus.producer"></a>
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pymsgbus.producer.Consumer" class="doc doc-heading">
+            <code>Consumer</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>A CONSUMER is a component that listens for and reacts to events within a BOUNDED CONTEXT.
+Consumers are responsible for processing events and triggering side effects in response to them.</p>
+<p>Unlike a SUBSCRIBER, a consumer is responsible for deciding which handlers to invoke based on
+the event type.</p>
+
+
+<p><span class="doc-section-title">Methods:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.producer.Consumer.register" href="#pymsgbus.producer.Consumer.register">register</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>type, handler: Callable) -&gt; None:
+Registers an event type and its corresponding handler function.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.producer.Consumer.handler" href="#pymsgbus.producer.Consumer.handler">handler</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Callable[..., None]) -&gt; Callable[..., None]:
+Decorator for registering a handler function for one or more event types.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.producer.Consumer.consume" href="#pymsgbus.producer.Consumer.consume">consume</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Event) -&gt; None:
+Consumes an event by invoking its registered handler functions.</p>
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
+        <p>Example:</p>
+<pre><code>.. code-block:: python
+
+@dataclass
+class UserCreated:
+    id: str
+    name: str
+
+@dataclass
+class UserUpdated:
+    id: str
+    name: str
+
+consumer = Consumer()
+
+db = {} # Database
+nfs = [] # Notification flags
+
+@consumer.handler
+def on_user_created(event: UserCreated | UserUpdated):
+    db[event.id] = event
+    nfs.append(event)
+
+producer = Producer()
+producer.register(consumer)
+producer.emit(UserCreated(id='1', name='Alice'))
+producer.emit(UserUpdated(id='1', name='Bob'))
+assert db['1'].name == 'Bob'
+assert nfs[0].name == 'Alice'
+assert nfs[1].name == 'Bob'
+</code></pre>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.producer.Consumer.consume" class="doc doc-heading">
+            <code class="highlight language-python">consume(event)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Consumes an event by invoking its registered handler functions.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>event</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="pymsgbus.models.Event" href="../types/#pymsgbus.models.Event">Event</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>The event to consume.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.producer.Consumer.handler" class="doc doc-heading">
+            <code class="highlight language-python">handler(wrapped)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Decorator for registering a handler function for one or more event types.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>wrapped</code></b>
+                  (<code><span title="typing.Callable">Callable</span>[[<a class="autorefs autorefs-internal" title="pymsgbus.models.Event" href="../types/#pymsgbus.models.Event">Event</a>], <span title="typing.Any">Any</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The handler function to register.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>Callable</code></b>(                  <code><span title="typing.Callable">Callable</span>[[<a class="autorefs autorefs-internal" title="pymsgbus.models.Event" href="../types/#pymsgbus.models.Event">Event</a>], <span title="typing.Any">Any</span>]</code>
+)              –
+              <div class="doc-md-description">
+                <p>The original handler function, unmodified.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<details class="note" open>
+  <summary>Note</summary>
+  <p>If the handler function is annotated with a union of event types,
+all of those types will be registered for the given handler.</p>
+</details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.producer.Consumer.register" class="doc doc-heading">
+            <code class="highlight language-python">register(annotation, handler)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Registers an event type and its corresponding handler function.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>annotation</code></b>
+                  (<code>_type_</code>)
+              –
+              <div class="doc-md-description">
+                <p>The event type or Union of event types to register.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>handler</code></b>
+                  (<code>_type_</code>)
+              –
+              <div class="doc-md-description">
+                <p>The handler function for the event.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pymsgbus.producer.Producer" class="doc doc-heading">
+            <code>Producer</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>A PRODUCER is a component that emits events within a BOUNDED CONTEXT. It is responsible for
+enqueue events and dispatching them to registered consumers for processing. </p>
+<p>Unlike a PUBLISHER, a producer emits events and the consumers are responsible for deciding
+wich handlers to invoke based on the event type.</p>
+
+
+<p><span class="doc-section-title">Methods:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.producer.Producer.emit" href="#pymsgbus.producer.Producer.emit">emit</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Event) -&gt; None:
+Dispatches an event to all registered consumers and processes all pending events in the queue,
+propagating them to their respective consumers.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.producer.Producer.register" href="#pymsgbus.producer.Producer.register">register</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Consumer) -&gt; None: 
+Registers a consumer to receive events emitted by the producer.</p>
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
+        <p>Example:</p>
+<pre><code>.. code-block:: python
+
+from pymsgbus.producer import Producer, Consumer
+
+consumer = Consumer()
+producer = Producer()
+
+...
+
+producer.register(consumer)
+producer.emit(UserCreated(id='1', name='Alice'))
+```
+</code></pre>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.producer.Producer.emit" class="doc doc-heading">
+            <code class="highlight language-python">emit(event)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Dispatches an event to all registered consumers and processes all pending events in the queue,
+propagating them to their respective consumers.</p>
+<p>Args:</p>
+<pre><code>event (Event): _description_
+</code></pre>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.producer.Producer.register" class="doc doc-heading">
+            <code class="highlight language-python">register(consumer)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Registers a consumer to receive events emitted by the producer.</p>
+<p>Args:</p>
+<pre><code>consumer (Consumer): The consumer to register.
+</code></pre>
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../pubsub/" class="btn btn-neutral float-right" title="Pubsub">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../pubsub/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
