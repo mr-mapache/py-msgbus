@@ -1,6 +1,6 @@
 """
 The are situations where "a priori" knowledge of the functions that will be called is not available
-in a given domain and the observer pattern is not applicable. In this case, a callback can be injected
+in a given layer and the observer pattern is not applicable. In this case, a callback can be injected
 into a function or method to act as normal function injected but performing additional logic from the
 outside, even grouping multiple callbacks together to be called in sequence.
 """
@@ -11,11 +11,16 @@ from typing import Any
 
 class Callback[T: Callable]:
     """
-    Callbacks is a class that manages a group of callback objects. It is responsible for
-    calling the callback objects and returning their results.
+    A `Callback` is a class that manages a group of `Callable` objects or functions.
+    It is responsible for calling all the callables with the same arguments and keyword arguments.
 
-    Args:
-        callbacks: A sequence of callback objects.
+    Methods:
+        add:
+            Adds a callback object to the group.
+        __call__: 
+            Calls each callback object with the given arguments and keyword arguments.
+        __iter__: 
+            Returns an iterator over the callback objects.
 
     Example:
 
@@ -45,11 +50,20 @@ class Callback[T: Callable]:
     def __init__(self, *callbacks: T):
         """
         Args:
-            *callbacks: A sequence of callback objects.
+            *callbacks: A sequence of callable objects.
         """
-        self.callbacks = callbacks
+        self.callbacks = [callback for callback in callbacks]
 
-    def __call__(self, *args, **kwargs) -> tuple[Any]:
+    def add(self, callback: T) -> None:
+        """
+        Adds a callback object to the group.
+
+        Args:
+            callback: A callable object.
+        """
+        self.callbacks.append(callback)
+
+    def __call__(self, *args: Any, **kwargs: Any) -> list[Any]:
         """
         Calls each callback object with the given arguments and keyword arguments.
 

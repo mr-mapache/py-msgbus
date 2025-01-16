@@ -1,6 +1,7 @@
 from typing import Callable
 from typing import Any
 from typing import Union
+from typing import Optional
 from inspect import signature
 from collections import deque
 
@@ -17,13 +18,13 @@ class Consumer:
     the event type.
 
     Methods:
-        register(annotation: type, handler: Callable) -> None:
+        register:
             Registers an event type and its corresponding handler function.
 
-        handler(wrapped: Callable[..., None]) -> Callable[..., None]:
+        handler:
             Decorator for registering a handler function for one or more event types.
 
-        consume(event: Event) -> None:
+        consume:
             Consumes an event by invoking its registered handler functions.
 
     Example:
@@ -75,8 +76,8 @@ class Consumer:
         Registers an event type and its corresponding handler function.
         
         Args:
-            annotation (_type_): The event type or Union of event types to register.
-            handler (_type_): The handler function for the event.
+            annotation (type): The event type or Union of event types to register.
+            handler (Callable): The handler function for the event.
         """
         if hasattr(annotation, '__origin__'):
             origin = getattr(annotation, '__origin__')
@@ -134,14 +135,15 @@ class Producer:
     Unlike a PUBLISHER, a producer emits events and the consumers are responsible for deciding
     wich handlers to invoke based on the event type.
 
-    Methods:
-        emit(event: Event) -> None:
-            Dispatches an event to all registered consumers and processes all pending events in the queue,
+    
+    Methods:        
+        emit:
+            Dispatches an event to all registered consumers and processes all pending events in the queue, 
             propagating them to their respective consumers.
 
-        register(consumer: Consumer) -> None: 
+        register: 
             Registers a consumer to receive events emitted by the producer.
-
+            
     Example:
 
         .. code-block:: python
@@ -161,6 +163,27 @@ class Producer:
     def __init__(self):
         self.queue = deque[Event]()
         self.consumers = list[Consumer]()
+
+    def enqueue(self, event: Event):
+        """
+        Enqueues an event to be processed later by the producer.
+
+        Args:
+        
+            event (Event): The event to enqueue.
+        """
+        self.queue.append(event)
+
+
+    def dequeue(self) -> Optional[Event]:
+        """
+        Dequeues the next event from the queue. If the queue is empty, this method will return None.
+
+        Returns:
+            Event: the next event in the queue or None if the queue is empty.
+        """
+        return self.queue.popleft() if self.queue else None
+
 
     def emit(self, event: Event):
         """

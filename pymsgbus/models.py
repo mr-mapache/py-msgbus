@@ -4,7 +4,7 @@ optionally subclassed and serve as a reference in definitions and writting self-
 
 The types defined in this module are:
 
-- Message: Represents the intention of transmitting information from within an AGGREGATE to the outside of the BOUNDED CONTEXT.
+- Message: Represents the intention of transmitting information the outside of the BOUNDED CONTEXT.
 - Event: Represents a significant occurrence that happens within a system's BOUNDED CONTEXT.
 - Command: Represents a directive to perform a specific action or mutation withing an AGGREGATE.
 - Query: Represents a request for information or data from a system's BOUNDED CONTEXT.
@@ -12,10 +12,12 @@ The types defined in this module are:
 These types are intended to be subclassed to define concrete message types with the required attributes.
 """
 
+from typing import Any
+
 class Message:
     """
-    A MESSAGE represents the intention of transmitting information from within an Aggregate
-    to the outside of the BOUNDED CONTEXT.
+    A MESSAGE represents the intention of transmitting information to the outside of
+    the BOUNDED CONTEXT.
 
     It serves as a base class for defining various types of messages, such as events,
     commands, and queries, which facilitate communication in a distributed system.
@@ -99,6 +101,16 @@ class Command:
         don't provide any functionality so feel free to use it as you want or ignore it.
     """
     ...
+
+    def execute(self) -> Any:
+        """
+        Execute the command. This method may be overridden in subclasses to provide
+        a default implementation for the command's execution. 
+
+        Returns:
+            Any: The result of the command execution
+        """
+        raise NotImplementedError("An `execute` method must be provided.")
 
 class Query:
     """

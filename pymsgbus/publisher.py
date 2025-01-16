@@ -7,21 +7,20 @@ from pymsgbus.models import Message
 
 class Subscriber:
     """
-    A SUBSCRIBER is a component that listens for messages published by an Aggregate and
-    processes them accordingly.
+    A SUBSCRIBER is a component that listens for messages published processes them accordingly.
 
     Unlike a CONSUMER, a SUBSCRIBER is responsible for processing messages based on the
     topic they were published to. It means that the publisher is responsible for deciding
     which handlers to invoke based on the topic of the message.
 
     Methods:
-        register(topic: str, handler: Callable):
+        register:
             Registers a message type and its corresponding handler function.
 
-        subscribe(topics: str):
+        subscribe:
             Decorator for registering a handler function to one or more topics.
 
-        receive(topic: str, message: Any):
+        receive:
             Receives a message from a given topic and triggers the corresponding handler functions
             to process it.
 
@@ -54,7 +53,6 @@ class Subscriber:
         publisher.publish('topic-2', 'World')
         assert database == ['World']
         assert notifications == ['Hello', 'World']
-
     """
 
     def __init__(self, provider: Provider = None, cast: bool = True) -> None:
@@ -125,11 +123,17 @@ class Subscriber:
 class Publisher:
     """
     A PUBLISHER is a component that publishes messages to a group of SUBSCRIBERS. It is
-    responsible for transmitting information from within an Aggregate to the outside of the
-    BOUNDED CONTEXT. 
+    responsible for transmitting information between components of an application. 
 
     Unlike an PRODUCER, a PUBLISHER publishes messages into defined topics, which are then
     received by SUBSCRIBERS that have registered to listen to those topics.
+
+    Methods:
+        publish:
+            Publishes a message to all registered SUBSCRIBERS.
+
+        register:
+            Adds a group of SUBSCRIBERS to the PUBLISHER
 
     Example:
 

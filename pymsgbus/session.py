@@ -112,7 +112,7 @@ class Session:
         self.resources = args
         self.handler: dict[type[BaseException], Callable[[Optional[BaseException]], bool]] = {}
 
-    def on(self, exception: type[BaseException]):
+    def on(self, exception: type[BaseException]) -> Callable:
         """
         Registers an exception handler for the given exception type.
 

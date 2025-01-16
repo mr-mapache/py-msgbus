@@ -14,13 +14,13 @@ class Service:
     operations, enforces business rules, and coordinates workflows. 
 
     Methods:
-        register(annotation, handler):
+        register:
             Registers a handler for a specific command or query type. Handles nested or generic annotations.
 
-        handler(wrapped: Callable[..., None | Any]) -> Callable[..., None | Any]:
+        handler:
             Decorator for registering a function as a handler for a command or query type.
 
-        execute(request: Command | Query) -> None | Any:
+        execute:
             Executes the handler associated with the given command or query.
 
     Example:
