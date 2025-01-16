@@ -1,11 +1,12 @@
-# py-msgbus
+# Welcome to pymsgbus
 
 ## Table of contents:
 
-1. Introduction
-2. Installation
-3. Example
-4. License
+- [Introduction](#introduction)
+- [Instalation](#instalation)
+- [Documentation](#documentation)
+- [Example](#example)
+- [License](#license)
 
 ## Introduction
 
@@ -18,6 +19,10 @@ To install the package:
 ```bash
 pip install pymsgbus
 ```
+
+## Documentation
+
+The documentation is available at [mr-mapache.github.io/py-msgbus/](mr-mapache.github.io/py-msgbus/) and it contains detailed information about the library's features and how to use them. It also explains the core concepts behind the library.
 
 ## Example
 
@@ -129,6 +134,7 @@ print(user.name) #'1'
 ```
 
 And just like that, you've implemented a powerful event-driven system with minimal setup!. 
+
 
 ## License
 

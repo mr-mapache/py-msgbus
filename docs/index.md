@@ -4,7 +4,6 @@
 
 - [Introduction](#introduction)
 - [Instalation](#instalation)
-- [Documentation](#documentation)
 - [Example](#example)
 - [License](#license)
 
@@ -19,10 +18,6 @@ To install the package:
 ```bash
 pip install pymsgbus
 ```
-
-## Documentation
-
-The documentation is available at [mr-mapache.github.io/py-msgbus/](mr-mapache.github.io/py-msgbus/) and it contains detailed information about the library's features and how to use them. It also explains the core concepts behind the library.
 
 ## Example
 
