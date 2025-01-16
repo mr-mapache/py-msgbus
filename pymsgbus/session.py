@@ -1,3 +1,20 @@
+"""
+This module is a framework for managing transactions across multiple resources, inspired by the
+SQLAlchemy library. It provides a mechanism for coordinating transactional operations, ensuring
+data integrity and reliability in complex workflows.
+
+The core concept of this module is the `Session` class, which represents a session for managing
+transactions with one or more resources. Sessions are used to group multiple operations into a
+single transaction that can be committed or rolled back as a unit. Custom exception handlers can
+be registered to handle specific exceptions that occur during the session to avoid rolling back
+the transaction. This is useful for early stopping in loops or other scenarios where an exception
+is expected and should not cause the transaction to fail.
+
+In order to use the `Session` class, you need to define a resource that implements the `Resource`
+interface. Resources are objects that can handle transactions and provide access to data or services.
+"""
+
+
 from typing import Protocol
 from typing import Callable
 from typing import Optional
@@ -72,14 +89,18 @@ class Session:
 
         from pybondi import Session
         
-        with Session(repository, publisher, logger) as session:
-            repository.add(model)
+        with Session(sqlalchemy, rabbitmq) as session: # Handle the resources you want!
+            session.on(StopIteration)(lambda: session.commit()) # If StopIteration is raised, commit the transaction
+            repository.put(model)
             publisher.publish(event)
-            session.commit() # Session will commit all resources
-
-            repository.add(another_model)
+            for epoch in range(10):
+                if epoch == 2:
+                    raise StopIteration("Early stopping") # Session will commit all resources in epoch 2
+                                                          # since we added a handler for StopIteration
+        with Session(sqlalchemy) as session:
+            repository.put(another_model)
             raise Exception("Something went wrong") # Session will rollback all resources
-                                                    # to the state where it was committed
+                                                    # to the state where they were committed
     """
     def __init__(self, *args: Resource):
         """

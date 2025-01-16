@@ -5,11 +5,12 @@ theme:
 
 nav:
   - Home: index.md
-  - Events: events.md
-  - Pubsub: pubsub.md
+  - Definitions: types.md
+  - Publisher and Subscribers: pubsub.md
+  - Producers and Consumers: events.md
   - Services: services.md
   - Callbacks: callbacks.md
-  - Types: types.md
+  - Unit Of Work: sessions.md
 
 plugins:
   - mkdocstrings:

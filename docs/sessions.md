@@ -1,6 +1,6 @@
-### Modeling the service layer with commands and queries.
+### Handle transactions with sessions
 
-::: pymsgbus.service
+::: pymsgbus.session
     handler: python
     options:
       show_root_heading: false

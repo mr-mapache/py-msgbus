@@ -1,15 +1,15 @@
 """
-    This module defines the core types used in the library. These types are mean to be optionally
-    subclassed and serve as a reference in definitions and writting self-documented code.
+This module defines the core concepts used in the library. The types defined here are mean to be
+optionally subclassed and serve as a reference in definitions and writting self-documented code.
 
-    The types defined in this module are:
+The types defined in this module are:
 
-    - Message: Represents the intention of transmitting information from within an AGGREGATE to the outside of the BOUNDED CONTEXT.
-    - Event: Represents a significant occurrence that happens within a system's BOUNDED CONTEXT.
-    - Command: Represents a directive to perform a specific action or mutation withing an AGGREGATE.
-    - Query: Represents a request for information or data from a system's BOUNDED CONTEXT.
+- Message: Represents the intention of transmitting information from within an AGGREGATE to the outside of the BOUNDED CONTEXT.
+- Event: Represents a significant occurrence that happens within a system's BOUNDED CONTEXT.
+- Command: Represents a directive to perform a specific action or mutation withing an AGGREGATE.
+- Query: Represents a request for information or data from a system's BOUNDED CONTEXT.
 
-    These types are intended to be subclassed to define concrete message types with the required.
+These types are intended to be subclassed to define concrete message types with the required attributes.
 """
 
 class Message:

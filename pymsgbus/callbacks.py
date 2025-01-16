@@ -1,3 +1,10 @@
+"""
+The are situations where "a priori" knowledge of the functions that will be called is not available
+in a given domain and the observer pattern is not applicable. In this case, a callback can be injected
+into a function or method to act as normal function injected but performing additional logic from the
+outside, even grouping multiple callbacks together to be called in sequence.
+"""
+
 from typing import Callable
 from typing import Iterator
 from typing import Any

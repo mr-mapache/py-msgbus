@@ -1,4 +1,4 @@
-### Types of messages
+### Fundamental schemas
 
 ::: pymsgbus.models
     handler: python
