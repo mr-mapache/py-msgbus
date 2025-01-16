@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Pubsub - pymsgbus</title>
+    <title>Publisher and Subscribers - pymsgbus</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -13,7 +13,7 @@
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Pubsub";
+        var mkdocs_page_name = "Publisher and Subscribers";
         var mkdocs_page_input_path = "pubsub.md";
         var mkdocs_page_url = null;
       </script>
@@ -41,13 +41,17 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../events/">Events</a>
+                <li class="toctree-l1"><a class="reference internal" href="../types/">Definitions</a>
                 </li>
               </ul>
               <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="#">Pubsub</a>
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Publisher and Subscribers</a>
     <ul class="current">
     </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../events/">Producers and Consumers</a>
                 </li>
               </ul>
               <ul>
@@ -59,7 +63,7 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../types/">Types</a>
+                <li class="toctree-l1"><a class="reference internal" href="../sessions/">Unit Of Work</a>
                 </li>
               </ul>
       </div>
@@ -76,7 +80,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-      <li class="breadcrumb-item active">Pubsub</li>
+      <li class="breadcrumb-item active">Publisher and Subscribers</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -282,18 +286,48 @@ processes them accordingly.</p>
 <p>Unlike a CONSUMER, a SUBSCRIBER is responsible for processing messages based on the
 topic they were published to. It means that the publisher is responsible for deciding
 which handlers to invoke based on the topic of the message.</p>
-<p>Methods:</p>
-<pre><code>register(topic: str, handler: Callable):
-    Registers a message type and its corresponding handler function.
 
-subscribe(topics):
-    Decorator for registering a handler function to one or more topics.
 
-receive(topic: str, message: Any):
-    Receives a message from a given topic and triggers the corresponding handler functions
-    to process it.
-</code></pre>
-<p>Example:</p>
+<p><span class="doc-section-title">Methods:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Subscriber.register" href="#pymsgbus.publisher.Subscriber.register">register</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>str, handler: Callable):
+Registers a message type and its corresponding handler function.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Subscriber.subscribe" href="#pymsgbus.publisher.Subscriber.subscribe">subscribe</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>str):
+Decorator for registering a handler function to one or more topics.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Subscriber.receive" href="#pymsgbus.publisher.Subscriber.receive">receive</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>str, message: Any):
+Receives a message from a given topic and triggers the corresponding handler functions
+to process it.</p>
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
+        <p>Example:</p>
 <pre><code>.. code-block:: python
 
 from pymsgbus import Subscriber
@@ -592,8 +626,8 @@ to process it.</p>
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../events/" class="btn btn-neutral float-left" title="Events"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../services/" class="btn btn-neutral float-right" title="Services">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../types/" class="btn btn-neutral float-left" title="Definitions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../events/" class="btn btn-neutral float-right" title="Producers and Consumers">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -616,10 +650,10 @@ to process it.</p>
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
-      <span><a href="../events/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../types/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../services/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../events/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

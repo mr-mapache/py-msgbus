@@ -41,11 +41,15 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../events/">Events</a>
+                <li class="toctree-l1"><a class="reference internal" href="../types/">Definitions</a>
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../pubsub/">Pubsub</a>
+                <li class="toctree-l1"><a class="reference internal" href="../pubsub/">Publisher and Subscribers</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../events/">Producers and Consumers</a>
                 </li>
               </ul>
               <ul>
@@ -59,7 +63,7 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../types/">Types</a>
+                <li class="toctree-l1"><a class="reference internal" href="../sessions/">Unit Of Work</a>
                 </li>
               </ul>
       </div>
@@ -94,6 +98,11 @@
 
 <a id="pymsgbus.callbacks"></a>
     <div class="doc doc-contents first">
+
+        <p>The are situations where "a priori" knowledge of the functions that will be called is not available
+in a given domain and the observer pattern is not applicable. In this case, a callback can be injected
+into a function or method to act as normal function injected but performing additional logic from the
+outside, even grouping multiple callbacks together to be called in sequence.</p>
 
 
 
@@ -345,7 +354,7 @@ for callback in callbacks:
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../services/" class="btn btn-neutral float-left" title="Services"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../types/" class="btn btn-neutral float-right" title="Types">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../sessions/" class="btn btn-neutral float-right" title="Unit Of Work">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -371,7 +380,7 @@ for callback in callbacks:
       <span><a href="../services/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../types/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../sessions/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
