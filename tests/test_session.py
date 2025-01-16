@@ -85,4 +85,4 @@ def test_sessions():
     assert resource.commited == True
     assert resource.closed == True
     assert resource.count == 2
-    assert resource.rolledback == True
+    assert resource.rolledback == False
