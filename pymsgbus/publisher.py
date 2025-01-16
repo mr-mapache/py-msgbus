@@ -15,11 +15,10 @@ class Subscriber:
     which handlers to invoke based on the topic of the message.
 
     Methods:
-
         register(topic: str, handler: Callable):
             Registers a message type and its corresponding handler function.
 
-        subscribe(topics):
+        subscribe(topics: str):
             Decorator for registering a handler function to one or more topics.
 
         receive(topic: str, message: Any):

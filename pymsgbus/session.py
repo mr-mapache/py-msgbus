@@ -144,7 +144,7 @@ class Session:
             result = True
             commit = True
 
-        if commit is True:
+        if commit:
             for resource in self.resources:
                 resource.commit()
         else:
@@ -155,16 +155,24 @@ class Session:
             resource.close()
         return result
     
-    def commit(self):
+    def commit(self) -> bool:
         """
         Commits the current transaction with the resource.
+
+        Returns:
+            True in order to indicate that the transaction was committed successfully.
         """
         for resource in self.resources:
             resource.commit()
+        return True
 
-    def rollback(self):
+    def rollback(self) -> bool:
         """
         Rolls back the current transaction with the resource.
+
+        Returns:
+            False in order to indicate that the transaction was rolled back.
         """
         for resource in self.resources:
             resource.rollback()
+        return False
