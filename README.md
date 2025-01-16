@@ -22,7 +22,7 @@ pip install pymsgbus
 
 ## Documentation
 
-The documentation is available at [mr-mapache.github.io/py-msgbus/](mr-mapache.github.io/py-msgbus/) and it contains detailed information about the library's features and how to use them. It also explains the core concepts behind the library.
+The documentation is available at [mr-mapache.github.io/py-msgbus/](https://mr-mapache.github.io/py-msgbus/) and it contains detailed information about the library's features and how to use them. It also explains the core concepts behind the library.
 
 ## Example
 
@@ -130,7 +130,7 @@ assert nfs['1'] == 'User 1 updated with name Jane Doe'
 user = service.execute(QueryUser(id='1'))
 
 print(user.id) # '1'
-print(user.name) #'1'
+print(user.name) #'Jane Doe'
 ```
 
 And just like that, you've implemented a powerful event-driven system with minimal setup!. 
