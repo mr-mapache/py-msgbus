@@ -4,10 +4,17 @@ optionally subclassed and serve as a reference in definitions and writting self-
 
 The types defined in this module are:
 
-- Message: Represents the intention of transmitting information the outside of the BOUNDED CONTEXT.
-- Event: Represents a significant occurrence that happens within a system's BOUNDED CONTEXT.
-- Command: Represents a directive to perform a specific action or mutation withing an AGGREGATE.
-- Query: Represents a request for information or data from a system's BOUNDED CONTEXT.
+`Message`: 
+    Represents the intention of transmitting information the outside of the BOUNDED CONTEXT.
+
+`Event`: 
+    Represents a significant occurrence that happens within a BOUNDED CONTEXT.
+
+`Command`: 
+    Represents a directive to perform a specific action or mutation withing an AGGREGATE.
+
+`Query`: 
+    Represents a request for information or data from a BOUNDED CONTEXT.
 
 These types are intended to be subclassed to define concrete message types with the required attributes.
 """

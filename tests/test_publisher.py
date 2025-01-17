@@ -7,11 +7,11 @@ db = []
 def get_db():
     return db
 
-@subscriber.subscribe('topic-1', 'topic-2')
+@subscriber.handler('topic-1', 'topic-2')
 def callback(message):
     nfs.append(message)
 
-@subscriber.subscribe('topic-2')
+@subscriber.handler('topic-2')
 def second_callback(message, db = Depends(get_db)):
     print(message)
     db.append(message)
@@ -19,7 +19,7 @@ def second_callback(message, db = Depends(get_db)):
 def test_publisher():
     publisher = Publisher()
     publisher.register(subscriber)
-    publisher.publish('topic-1', 'Hello')
-    publisher.publish('topic-2', 'World')
+    publisher.publish('Hello', 'topic-1')
+    publisher.publish('World', 'topic-2')
     assert db == ['World']
     assert nfs == ['Hello', 'World']

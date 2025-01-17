@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pymsgbus"
-version = "0.1.3"
+version = "0.1.4"
 description = "A lightweight libary for event driven systems."
 authors = ["mr-mapache <eric.m.cardozo@mi.unc.edu.ar>"]
 license = "MIT"

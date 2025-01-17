@@ -1,9 +1,15 @@
 from typing import Callable
 from typing import Any
+from typing import Protocol
 
 from pymsgbus.depends import inject, Provider
 from pymsgbus.depends import Depends as Depends
 from pymsgbus.models import Message
+        
+class Publisher(Protocol):
+    
+    def register(self, *args):...
+
 
 class Subscriber:
     """
@@ -17,7 +23,7 @@ class Subscriber:
         register:
             Registers a message type and its corresponding handler function.
 
-        subscribe:
+        handler:
             Decorator for registering a handler function to one or more topics.
 
         receive:
@@ -39,11 +45,11 @@ class Subscriber:
         def get_db():
             return database
 
-        @subscriber.subscribe('topic-1', 'topic-2')
+        @subscriber.handler('topic-1', 'topic-2')
         def callback(message):
             notifications.append(message)
 
-        @subscriber.subscribe('topic-2')
+        @subscriber.handler('topic-2')
         def second_callback(message, db = Depends(get_db)): # Like FastAPI's Depends
             database.append(message)
             
@@ -75,22 +81,6 @@ class Subscriber:
         """
         injected = inject(subscriber, dependency_overrides_provider=self.provider, cast=self.cast)
         self.handlers.setdefault(topic, []).append(injected)
-
-    def subscribe(self, *topics: str) -> Callable[[Message | Any], None]:
-        """
-        Decorator for registering a handler function to one or more topics.
-
-        Args:
-            topics (str): The topics to subscribe to.
-
-        Returns:
-            Callable: The original handler function, unmodified.
-        """
-        def decorator(wrapped: Callable[[Message | Any], None]):
-            for topic in topics:
-                self.register(topic, wrapped)
-            return wrapped
-        return decorator
     
     def handler(self, *topics: str) -> Callable[[Message | Any], None]:
         """
@@ -108,7 +98,7 @@ class Subscriber:
             return wrapped
         return decorator
 
-    def receive(self, topic: str, message: Message | Any):
+    def receive(self, message: Message | Any, topic: str):
         """
         Receives a message from a given topic and triggers the corresponding handler functions
         to process it.
@@ -119,6 +109,15 @@ class Subscriber:
         """
         for handler in self.handlers.get(topic, []):
             handler(message)
+    
+    def subscribe(self, publisher: Publisher):
+        """
+        Subscribe the subscriber to a given publisher.
+
+        Args:
+            publisher (Publisher): the publisher 
+        """
+        publisher.register(self)
 
 class Publisher:
     """
@@ -154,7 +153,7 @@ class Publisher:
     def __init__(self) -> None:
         self.subscribers = list[Subscriber]()
 
-    def publish(self, topic: str, message: Message | Any) -> None:
+    def publish(self, message: Message | Any, topic: str) -> None:
         """
         Publishes a message to all registered SUBSCRIBERS.
 
@@ -163,7 +162,7 @@ class Publisher:
             message (Message | Any): The message to publish.
         """
         for subscriber in self.subscribers:
-            subscriber.receive(topic, message)
+            subscriber.receive(message, topic)
 
     def register(self, *subscribers: Subscriber) -> None:
         """

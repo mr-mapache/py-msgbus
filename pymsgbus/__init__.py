@@ -1,5 +1,4 @@
 from pymsgbus.depends import Depends as Depends
-from pymsgbus.callbacks import Callback as Callback
 from pymsgbus.producer import Consumer as Consumer
 from pymsgbus.producer import Producer as Producer
 from pymsgbus.publisher import Publisher as Publisher
