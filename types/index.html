@@ -59,7 +59,7 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../callbacks/">Callbacks</a>
+                <li class="toctree-l1"><a class="" href="../callbacks.md">Callbacks</a>
                 </li>
               </ul>
               <ul>
@@ -102,12 +102,14 @@
         <p>This module defines the core concepts used in the library. The types defined here are mean to be
 optionally subclassed and serve as a reference in definitions and writting self-documented code.</p>
 <p>The types defined in this module are:</p>
-<ul>
-<li>Message: Represents the intention of transmitting information from within an AGGREGATE to the outside of the BOUNDED CONTEXT.</li>
-<li>Event: Represents a significant occurrence that happens within a system's BOUNDED CONTEXT.</li>
-<li>Command: Represents a directive to perform a specific action or mutation withing an AGGREGATE.</li>
-<li>Query: Represents a request for information or data from a system's BOUNDED CONTEXT.</li>
-</ul>
+<p><code>Message</code>: 
+    Represents the intention of transmitting information the outside of the BOUNDED CONTEXT.</p>
+<p><code>Event</code>: 
+    Represents a significant occurrence that happens within a BOUNDED CONTEXT.</p>
+<p><code>Command</code>: 
+    Represents a directive to perform a specific action or mutation withing an AGGREGATE.</p>
+<p><code>Query</code>: 
+    Represents a request for information or data from a BOUNDED CONTEXT.</p>
 <p>These types are intended to be subclassed to define concrete message types with the required attributes.</p>
 
 
@@ -163,6 +165,63 @@ class CreateUserCommand(Command): # Could be a dataclass as well or anything
 
 
 
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.models.Command.execute" class="doc doc-heading">
+            <code class="highlight language-python">execute()</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Execute the command. This method may be overridden in subclasses to provide
+a default implementation for the command's execution. </p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>Any</code></b>(                  <code><span title="typing.Any">Any</span></code>
+)              –
+              <div class="doc-md-description">
+                <p>The result of the command execution</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+
+
+  </div>
 
     </div>
 
@@ -225,8 +284,8 @@ class OrderPlacedEvent(Event): # Could be a dataclass as well or anything
     <div class="doc doc-contents ">
 
 
-        <p>A MESSAGE represents the intention of transmitting information from within an Aggregate
-to the outside of the BOUNDED CONTEXT.</p>
+        <p>A MESSAGE represents the intention of transmitting information to the outside of
+the BOUNDED CONTEXT.</p>
 <p>It serves as a base class for defining various types of messages, such as events,
 commands, and queries, which facilitate communication in a distributed system.</p>
 <p>Subclass this class to define concrete message types with the required attributes.</p>

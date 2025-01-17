@@ -59,7 +59,7 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../callbacks/">Callbacks</a>
+                <li class="toctree-l1"><a class="" href="../callbacks.md">Callbacks</a>
                 </li>
               </ul>
               <ul>
@@ -148,8 +148,7 @@ the event type.</p>
               <td><code><a class="autorefs autorefs-internal" title="pymsgbus.producer.Consumer.register" href="#pymsgbus.producer.Consumer.register">register</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>type, handler: Callable) -&gt; None:
-Registers an event type and its corresponding handler function.</p>
+                  <p>Registers an event type and its corresponding handler function.</p>
                 </div>
               </td>
             </tr>
@@ -157,8 +156,7 @@ Registers an event type and its corresponding handler function.</p>
               <td><code><a class="autorefs autorefs-internal" title="pymsgbus.producer.Consumer.handler" href="#pymsgbus.producer.Consumer.handler">handler</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>Callable[..., None]) -&gt; Callable[..., None]:
-Decorator for registering a handler function for one or more event types.</p>
+                  <p>Decorator for registering a handler function for one or more event types.</p>
                 </div>
               </td>
             </tr>
@@ -166,8 +164,7 @@ Decorator for registering a handler function for one or more event types.</p>
               <td><code><a class="autorefs autorefs-internal" title="pymsgbus.producer.Consumer.consume" href="#pymsgbus.producer.Consumer.consume">consume</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>Event) -&gt; None:
-Consumes an event by invoking its registered handler functions.</p>
+                  <p>Consumes an event by invoking its registered handler functions.</p>
                 </div>
               </td>
             </tr>
@@ -360,7 +357,7 @@ all of those types will be registered for the given handler.</p>
         <ul class="first simple">
             <li>
               <b><code>annotation</code></b>
-                  (<code>_type_</code>)
+                  (<code>type</code>)
               –
               <div class="doc-md-description">
                 <p>The event type or Union of event types to register.</p>
@@ -368,7 +365,7 @@ all of those types will be registered for the given handler.</p>
             </li>
             <li>
               <b><code>handler</code></b>
-                  (<code>_type_</code>)
+                  (<code><span title="typing.Callable">Callable</span></code>)
               –
               <div class="doc-md-description">
                 <p>The handler function for the event.</p>
@@ -424,8 +421,7 @@ wich handlers to invoke based on the event type.</p>
               <td><code><a class="autorefs autorefs-internal" title="pymsgbus.producer.Producer.emit" href="#pymsgbus.producer.Producer.emit">emit</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>Event) -&gt; None:
-Dispatches an event to all registered consumers and processes all pending events in the queue,
+                  <p>Dispatches an event to all registered consumers and processes all pending events in the queue, 
 propagating them to their respective consumers.</p>
                 </div>
               </td>
@@ -434,8 +430,7 @@ propagating them to their respective consumers.</p>
               <td><code><a class="autorefs autorefs-internal" title="pymsgbus.producer.Producer.register" href="#pymsgbus.producer.Producer.register">register</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>Consumer) -&gt; None: 
-Registers a consumer to receive events emitted by the producer.</p>
+                  <p>Registers a consumer to receive events emitted by the producer.</p>
                 </div>
               </td>
             </tr>
@@ -477,6 +472,46 @@ producer.emit(UserCreated(id='1', name='Alice'))
 <div class="doc doc-object doc-function">
 
 
+<h3 id="pymsgbus.producer.Producer.dequeue" class="doc doc-heading">
+            <code class="highlight language-python">dequeue()</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Dequeues the next event from the queue. If the queue is empty, this method will return None.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>Event</code></b>(                  <code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" title="pymsgbus.models.Event" href="../types/#pymsgbus.models.Event">Event</a>]</code>
+)              –
+              <div class="doc-md-description">
+                <p>the next event in the queue or None if the queue is empty.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h3 id="pymsgbus.producer.Producer.emit" class="doc doc-heading">
             <code class="highlight language-python">emit(event)</code>
 
@@ -489,6 +524,26 @@ producer.emit(UserCreated(id='1', name='Alice'))
 propagating them to their respective consumers.</p>
 <p>Args:</p>
 <pre><code>event (Event): _description_
+</code></pre>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.producer.Producer.enqueue" class="doc doc-heading">
+            <code class="highlight language-python">enqueue(event)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Enqueues an event to be processed later by the producer.</p>
+<p>Args:</p>
+<pre><code>event (Event): The event to enqueue.
 </code></pre>
 
     </div>

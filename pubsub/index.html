@@ -59,7 +59,7 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../callbacks/">Callbacks</a>
+                <li class="toctree-l1"><a class="" href="../callbacks.md">Callbacks</a>
                 </li>
               </ul>
               <ul>
@@ -130,11 +130,39 @@
 
 
         <p>A PUBLISHER is a component that publishes messages to a group of SUBSCRIBERS. It is
-responsible for transmitting information from within an Aggregate to the outside of the
-BOUNDED CONTEXT. </p>
+responsible for transmitting information between components of an application. </p>
 <p>Unlike an PRODUCER, a PUBLISHER publishes messages into defined topics, which are then
 received by SUBSCRIBERS that have registered to listen to those topics.</p>
-<p>Example:</p>
+
+
+<p><span class="doc-section-title">Methods:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Publisher.publish" href="#pymsgbus.publisher.Publisher.publish">publish</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Publishes a message to all registered SUBSCRIBERS.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Publisher.register" href="#pymsgbus.publisher.Publisher.register">register</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Adds a group of SUBSCRIBERS to the PUBLISHER</p>
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
+        <p>Example:</p>
 <pre><code>.. code-block:: python
 
 from pymsgbus import Subscriber
@@ -171,7 +199,7 @@ publisher.publish('topic-2', 'World')
 
 
 <h3 id="pymsgbus.publisher.Publisher.publish" class="doc doc-heading">
-            <code class="highlight language-python">publish(topic, message)</code>
+            <code class="highlight language-python">publish(message, topic)</code>
 
 </h3>
 
@@ -281,8 +309,7 @@ publisher.publish('topic-2', 'World')
     <div class="doc doc-contents ">
 
 
-        <p>A SUBSCRIBER is a component that listens for messages published by an Aggregate and
-processes them accordingly.</p>
+        <p>A SUBSCRIBER is a component that listens for messages published processes them accordingly.</p>
 <p>Unlike a CONSUMER, a SUBSCRIBER is responsible for processing messages based on the
 topic they were published to. It means that the publisher is responsible for deciding
 which handlers to invoke based on the topic of the message.</p>
@@ -301,17 +328,15 @@ which handlers to invoke based on the topic of the message.</p>
               <td><code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Subscriber.register" href="#pymsgbus.publisher.Subscriber.register">register</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>str, handler: Callable):
-Registers a message type and its corresponding handler function.</p>
+                  <p>Registers a message type and its corresponding handler function.</p>
                 </div>
               </td>
             </tr>
             <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Subscriber.subscribe" href="#pymsgbus.publisher.Subscriber.subscribe">subscribe</a></code></td>
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Subscriber.handler" href="#pymsgbus.publisher.Subscriber.handler">handler</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>str):
-Decorator for registering a handler function to one or more topics.</p>
+                  <p>Decorator for registering a handler function to one or more topics.</p>
                 </div>
               </td>
             </tr>
@@ -319,8 +344,7 @@ Decorator for registering a handler function to one or more topics.</p>
               <td><code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Subscriber.receive" href="#pymsgbus.publisher.Subscriber.receive">receive</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>str, message: Any):
-Receives a message from a given topic and triggers the corresponding handler functions
+                  <p>Receives a message from a given topic and triggers the corresponding handler functions
 to process it.</p>
                 </div>
               </td>
@@ -341,11 +365,11 @@ database = []
 def get_db():
     return database
 
-@subscriber.subscribe('topic-1', 'topic-2')
+@subscriber.handler('topic-1', 'topic-2')
 def callback(message):
     notifications.append(message)
 
-@subscriber.subscribe('topic-2')
+@subscriber.handler('topic-2')
 def second_callback(message, db = Depends(get_db)): # Like FastAPI's Depends
     database.append(message)
 
@@ -445,7 +469,7 @@ assert notifications == ['Hello', 'World']
 
 
 <h3 id="pymsgbus.publisher.Subscriber.receive" class="doc doc-heading">
-            <code class="highlight language-python">receive(topic, message)</code>
+            <code class="highlight language-python">receive(message, topic)</code>
 
 </h3>
 
@@ -544,14 +568,14 @@ to process it.</p>
 
 
 <h3 id="pymsgbus.publisher.Subscriber.subscribe" class="doc doc-heading">
-            <code class="highlight language-python">subscribe(*topics)</code>
+            <code class="highlight language-python">subscribe(publisher)</code>
 
 </h3>
 
 
     <div class="doc doc-contents ">
 
-        <p>Decorator for registering a handler function to one or more topics.</p>
+        <p>Subscribe the subscriber to a given publisher.</p>
 
 
 <table class="field-list">
@@ -565,36 +589,11 @@ to process it.</p>
       <td class="field-body">
         <ul class="first simple">
             <li>
-              <b><code>topics</code></b>
-                  (<code>str</code>, default:
-                      <code>()</code>
-)
+              <b><code>publisher</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Publisher" href="#pymsgbus.publisher.Publisher">Publisher</a></code>)
               –
               <div class="doc-md-description">
-                <p>The topics to subscribe to.</p>
-              </div>
-            </li>
-        </ul>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-<table class="field-list">
-  <colgroup>
-    <col class="field-name" />
-    <col class="field-body" />
-  </colgroup>
-  <tbody valign="top">
-    <tr class="field">
-      <th class="field-name">Returns:</th>
-      <td class="field-body">
-        <ul class="first simple">
-            <li>
-<b><code>Callable</code></b>(                  <code><span title="typing.Callable">Callable</span>[[<a class="autorefs autorefs-internal" title="pymsgbus.models.Message" href="../types/#pymsgbus.models.Message">Message</a> | <span title="typing.Any">Any</span>], None]</code>
-)              –
-              <div class="doc-md-description">
-                <p>The original handler function, unmodified.</p>
+                <p>the publisher</p>
               </div>
             </li>
         </ul>
