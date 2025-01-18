@@ -69,10 +69,6 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="" href="callbacks.md">Callbacks</a>
-                </li>
-              </ul>
-              <ul>
                 <li class="toctree-l1"><a class="reference internal" href="sessions/">Unit Of Work</a>
                 </li>
               </ul>
@@ -99,7 +95,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="welcome-to-pymsgbus">Welcome to pymsgbus</h1>
+                <h1 id="welcome-to-pymsgbus">Welcome to PyMsgbus</h1>
 <h2 id="table-of-contents">Table of contents:</h2>
 <ul>
 <li><a href="#introduction">Introduction</a></li>
@@ -108,7 +104,19 @@
 <li><a href="#license">License</a></li>
 </ul>
 <h2 id="introduction">Introduction</h2>
-<p>pymsgbus is a Python library designed to simplify the creation of event-driven systems. With features like dependency injection, message-based architecture, and seamless data validation via Pydantic, it empowers developers to build scalable and maintainable systems with minimal effort.</p>
+<p>FastAPI is an excellent framework for building RESTful APIs, offering simplicity and efficiency. However, some backend applications require more sophisticated architectures to handle complex business logic. In many cases, straightforward CRUD APIs suffice, where no significant server-side logic is needed—simply exposing a repository interface through a REST controller is enough. No service layer required.</p>
+<p>But sometimes the limitations of RESTful APIs become evident. Advanced use cases often demand more complex architectural patterns, such as CQRS or event-driven, in these scenarios, exposing resources from a database is not enough and a strong service layer is needed. This is becoming more common with the rise of IA and ML applications, where servers expose logic instead of resources.</p>
+<p>PyMsgbus is a library designed to simplify the creation of the service layer, implementing several messaging patterns and providing a simple and efficient way to implement message-driven systems, using FastAPI's dependency injection system cleaned from all the HTTP logic, to help you decouple your controllers and infrastructure from your business logic.</p>
+<p>This library is not meant to replace FastAPI, but to complement it, providing a way to implement a strong service layer without controllers' logic, and enabling a service agnostic transport layer.</p>
+<p>This library provides:</p>
+<ul>
+<li>A dependency injection system.</li>
+<li>A Publisher/Subscriber pattern for your messages.</li>
+<li>A Producer/Consumer pattern for your events.</li>
+<li>A Service class to handle your commands and queries.</li>
+<li>A Session class to handle your transactions.</li>
+</ul>
+<p>All of them using the dependency injection system taken from FastAPI in the <a href="https://github.com/Lancetnik/FastDepends">fast-depends</a> library.</p>
 <h2 id="instalation">Instalation</h2>
 <p>To install the package:</p>
 <pre><code class="language-bash">pip install pymsgbus
@@ -167,7 +175,7 @@ def notifications_dependency() -&gt; dict:
 @service.handler
 def handle_put_user(command: CreateUser | UpdateUser, database = Depends(database_dependency)):
     database[command.id] = command.name
-    consumer.consume(UserUpdated(id=command.id, name=command.name))
+    consumer.handle(UserUpdated(id=command.id, name=command.name))
 
 @consumer.handler
 def consume_user_updated(event: UserUpdated):
@@ -195,8 +203,8 @@ service.dependency_overrides[database_dependency] = database_adapter
 subscriber.dependency_overrides[notifications_dependency] = notification_adapter
 </code></pre>
 <p>Execute your logic:</p>
-<pre><code class="language-python">service.execute(CreateUser(id='1', name='John Doe'))
-service.execute(UpdateUser(id='1', name='Jane Doe'))
+<pre><code class="language-python">service.handle(CreateUser(id='1', name='John Doe'))
+service.handle(UpdateUser(id='1', name='Jane Doe'))
 
 print(db['1']) # Jane Doe
 assert db['1'] == 'Jane Doe'
@@ -204,12 +212,39 @@ assert db['1'] == 'Jane Doe'
 print(nfs['1']) # User 1 updated with name Jane Doe
 assert nfs['1'] == 'User 1 updated with name Jane Doe'
 
-user = service.execute(QueryUser(id='1'))
+user = service.handle(QueryUser(id='1'))
 
 print(user.id) # '1'
 print(user.name) #'1'
 </code></pre>
-<p>And just like that, you've implemented a powerful event-driven system with minimal setup!. </p>
+<p>You just created a powerful event-driven system with minimal effort. Finally let's say you want to expose your service with FastAPI.
+Create a transport layer completely decoupled from your business logic, and override the service with the one you created. </p>
+<pre><code class="language-python">from fastapi import FastAPI, Depends
+from pydantic import BaseModel
+from pymsgbus import Service
+
+class Command(BaseModel):
+    type: str
+    payload: dict
+
+class Query(BaseModel):
+    type: str
+    parameters: dict
+
+api = FastAPI()
+
+def service():
+    raise NotImplementedError
+
+@api.post('/commands')
+def handle_command(command: Command, service: Service = Depends(service)):
+    service.execute(command.type, command.payload)
+
+@api.post('/queries')
+def handle_query(query: Query, service: Service = Depends(service)):
+    return service.handle(query.type, query.parameters)
+</code></pre>
+<p>And that's it. In just two endpoints you can have a whole interchangeable service layer exposed with as many handlers as you want Asyncio support comming soon. </p>
 <h2 id="license">License</h2>
 <p>This project is licensed under the terms of the MIT license. Feel free to use it in your projects.</p>
               
@@ -259,5 +294,5 @@ print(user.name) #'1'
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-01-17 08:31:46.614703+00:00
+Build Date UTC : 2025-01-18 16:29:51.227861+00:00
 -->

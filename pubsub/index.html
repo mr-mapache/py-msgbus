@@ -59,10 +59,6 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="" href="../callbacks.md">Callbacks</a>
-                </li>
-              </ul>
-              <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../sessions/">Unit Of Work</a>
                 </li>
               </ul>
@@ -96,7 +92,7 @@
 
 
 
-<a id="pymsgbus.publisher"></a>
+<a id="pymsgbus.pubsub"></a>
     <div class="doc doc-contents first">
 
 
@@ -119,7 +115,7 @@
 
 
 
-<h2 id="pymsgbus.publisher.Publisher" class="doc doc-heading">
+<h2 id="pymsgbus.pubsub.Publisher" class="doc doc-heading">
             <code>Publisher</code>
 
 
@@ -145,7 +141,7 @@ received by SUBSCRIBERS that have registered to listen to those topics.</p>
       </thead>
       <tbody>
             <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Publisher.publish" href="#pymsgbus.publisher.Publisher.publish">publish</a></code></td>
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.pubsub.Publisher.publish" href="#pymsgbus.pubsub.Publisher.publish">publish</a></code></td>
               <td>
                 <div class="doc-md-description">
                   <p>Publishes a message to all registered SUBSCRIBERS.</p>
@@ -153,7 +149,7 @@ received by SUBSCRIBERS that have registered to listen to those topics.</p>
               </td>
             </tr>
             <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Publisher.register" href="#pymsgbus.publisher.Publisher.register">register</a></code></td>
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.pubsub.Publisher.register" href="#pymsgbus.pubsub.Publisher.register">register</a></code></td>
               <td>
                 <div class="doc-md-description">
                   <p>Adds a group of SUBSCRIBERS to the PUBLISHER</p>
@@ -198,7 +194,7 @@ publisher.publish('topic-2', 'World')
 <div class="doc doc-object doc-function">
 
 
-<h3 id="pymsgbus.publisher.Publisher.publish" class="doc doc-heading">
+<h3 id="pymsgbus.pubsub.Publisher.publish" class="doc doc-heading">
             <code class="highlight language-python">publish(message, topic)</code>
 
 </h3>
@@ -247,7 +243,7 @@ publisher.publish('topic-2', 'World')
 <div class="doc doc-object doc-function">
 
 
-<h3 id="pymsgbus.publisher.Publisher.register" class="doc doc-heading">
+<h3 id="pymsgbus.pubsub.Publisher.register" class="doc doc-heading">
             <code class="highlight language-python">register(*subscribers)</code>
 
 </h3>
@@ -270,7 +266,7 @@ publisher.publish('topic-2', 'World')
         <ul class="first simple">
             <li>
               <b><code>*subscribers</code></b>
-                  (<code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Subscriber" href="#pymsgbus.publisher.Subscriber">Subscriber</a></code>, default:
+                  (<code><a class="autorefs autorefs-internal" title="pymsgbus.pubsub.Subscriber" href="#pymsgbus.pubsub.Subscriber">Subscriber</a></code>, default:
                       <code>()</code>
 )
               –
@@ -299,7 +295,7 @@ publisher.publish('topic-2', 'World')
 
 
 
-<h2 id="pymsgbus.publisher.Subscriber" class="doc doc-heading">
+<h2 id="pymsgbus.pubsub.Subscriber" class="doc doc-heading">
             <code>Subscriber</code>
 
 
@@ -325,7 +321,7 @@ which handlers to invoke based on the topic of the message.</p>
       </thead>
       <tbody>
             <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Subscriber.register" href="#pymsgbus.publisher.Subscriber.register">register</a></code></td>
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.pubsub.Subscriber.register" href="#pymsgbus.pubsub.Subscriber.register">register</a></code></td>
               <td>
                 <div class="doc-md-description">
                   <p>Registers a message type and its corresponding handler function.</p>
@@ -333,7 +329,7 @@ which handlers to invoke based on the topic of the message.</p>
               </td>
             </tr>
             <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Subscriber.handler" href="#pymsgbus.publisher.Subscriber.handler">handler</a></code></td>
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.pubsub.Subscriber.handler" href="#pymsgbus.pubsub.Subscriber.handler">handler</a></code></td>
               <td>
                 <div class="doc-md-description">
                   <p>Decorator for registering a handler function to one or more topics.</p>
@@ -341,7 +337,7 @@ which handlers to invoke based on the topic of the message.</p>
               </td>
             </tr>
             <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Subscriber.receive" href="#pymsgbus.publisher.Subscriber.receive">receive</a></code></td>
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.pubsub.Subscriber.receive" href="#pymsgbus.pubsub.Subscriber.receive">receive</a></code></td>
               <td>
                 <div class="doc-md-description">
                   <p>Receives a message from a given topic and triggers the corresponding handler functions
@@ -402,7 +398,70 @@ assert notifications == ['Hello', 'World']
 <div class="doc doc-object doc-function">
 
 
-<h3 id="pymsgbus.publisher.Subscriber.handler" class="doc doc-heading">
+<h3 id="pymsgbus.pubsub.Subscriber.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(name=None, cast=True, provider=None)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Initializes a new instance of the Subscriber class.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code>str</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The name of the subscriber. Defaults to None.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>cast</code></b>
+                  (<code>bool</code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Casting dependencies during dependency injection. Defaults to True.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>provider</code></b>
+                  (<code><span title="pymsgbus.depends.Provider">Provider</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>. The dependency provider for dependency injection. Defaults to None.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.pubsub.Subscriber.handler" class="doc doc-heading">
             <code class="highlight language-python">handler(*topics)</code>
 
 </h3>
@@ -468,7 +527,7 @@ assert notifications == ['Hello', 'World']
 <div class="doc doc-object doc-function">
 
 
-<h3 id="pymsgbus.publisher.Subscriber.receive" class="doc doc-heading">
+<h3 id="pymsgbus.pubsub.Subscriber.receive" class="doc doc-heading">
             <code class="highlight language-python">receive(message, topic)</code>
 
 </h3>
@@ -518,7 +577,7 @@ to process it.</p>
 <div class="doc doc-object doc-function">
 
 
-<h3 id="pymsgbus.publisher.Subscriber.register" class="doc doc-heading">
+<h3 id="pymsgbus.pubsub.Subscriber.register" class="doc doc-heading">
             <code class="highlight language-python">register(topic, subscriber)</code>
 
 </h3>
@@ -567,7 +626,7 @@ to process it.</p>
 <div class="doc doc-object doc-function">
 
 
-<h3 id="pymsgbus.publisher.Subscriber.subscribe" class="doc doc-heading">
+<h3 id="pymsgbus.pubsub.Subscriber.subscribe" class="doc doc-heading">
             <code class="highlight language-python">subscribe(publisher)</code>
 
 </h3>
@@ -590,7 +649,7 @@ to process it.</p>
         <ul class="first simple">
             <li>
               <b><code>publisher</code></b>
-                  (<code><a class="autorefs autorefs-internal" title="pymsgbus.publisher.Publisher" href="#pymsgbus.publisher.Publisher">Publisher</a></code>)
+                  (<code><a class="autorefs autorefs-internal" title="pymsgbus.pubsub.Publisher" href="#pymsgbus.pubsub.Publisher">Publisher</a></code>)
               –
               <div class="doc-md-description">
                 <p>the publisher</p>

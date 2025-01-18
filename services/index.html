@@ -59,10 +59,6 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="" href="../callbacks.md">Callbacks</a>
-                </li>
-              </ul>
-              <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../sessions/">Unit Of Work</a>
                 </li>
               </ul>
@@ -144,7 +140,7 @@ operations, enforces business rules, and coordinates workflows. </p>
       </thead>
       <tbody>
             <tr class="doc-section-item">
-              <td><code><span title="pymsgbus.service.Service.register">register</span></code></td>
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.service.Service.register" href="#pymsgbus.service.Service.register">register</a></code></td>
               <td>
                 <div class="doc-md-description">
                   <p>Registers a handler for a specific command or query type. Handles nested or generic annotations.</p>
@@ -160,7 +156,7 @@ operations, enforces business rules, and coordinates workflows. </p>
               </td>
             </tr>
             <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.service.Service.execute" href="#pymsgbus.service.Service.execute">execute</a></code></td>
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.service.Service.handle" href="#pymsgbus.service.Service.handle">handle</a></code></td>
               <td>
                 <div class="doc-md-description">
                   <p>Executes the handler associated with the given command or query.</p>
@@ -205,9 +201,9 @@ def handle_put_user(command: CreateUser[str] | UpdateUser):
 def handle_query_user(query: QueryUser) -&gt; User: # Performs pydantic validation
     return User(id=query.id, name=db.get(query.id))
 
-service.execute(CreateUser(id='1', name='Alice'))
-service.execute(UpdateUser(id='1', name='Bob'))
-user = service.execute(QueryUser(id='1'))
+service.handle(CreateUser(id='1', name='Alice'))
+service.handle(UpdateUser(id='1', name='Bob'))
+user = service.handle(QueryUser(id='1'))
 assert user.name == 'Bob'
 assert user.id == '1'
 </code></pre>
@@ -233,15 +229,176 @@ assert user.id == '1'
 <div class="doc doc-object doc-function">
 
 
-<h3 id="pymsgbus.service.Service.execute" class="doc doc-heading">
-            <code class="highlight language-python">execute(request)</code>
+<h3 id="pymsgbus.service.Service.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(name=None, cast=True, provider=None, generator=lambda name: name, validator=lambda type, payload: type(**payload))</code>
 
 </h3>
 
 
     <div class="doc doc-contents ">
 
-        <p>Executes the handler associated with the given command or query.</p>
+        <p>Initializes a new instance of the Subscriber class.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code>str</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The name of the subscriber. Defaults to None.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>cast</code></b>
+                  (<code>bool</code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Casting dependencies during dependency injection. Defaults to True.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>provider</code></b>
+                  (<code><span title="pymsgbus.depends.Provider">Provider</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>. The dependency provider for dependency injection. Defaults to None.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>generator</code></b>
+                  (<code><span title="typing.Callable">Callable</span>[[str], str]</code>, default:
+                      <code>lambda name: <span title="pymsgbus.service.Service.name">name</span></code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The generator function for generating the handler key. Defaults to lambda name: name.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>validator</code></b>
+                  (<code><span title="typing.Callable">Callable</span>[[<span title="typing.Any">Any</span>, <span title="typing.Any">Any</span>], <span title="typing.Any">Any</span>]</code>, default:
+                      <code>lambda type, payload: type(**payload)</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The validator function for validating the payload. Defaults to lambda type, payload: type(**payload).</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.service.Service.execute" class="doc doc-heading">
+            <code class="highlight language-python">execute(action, payload)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Executes the handler associated with the given request action and it's payload. It validates the payload
+asoociated with the action using the validator function provided by the user. The validator function defaults
+to the constructor of the action class. If you are using a validation library like pydantic, you can override
+the validator function to use the pydantic model_validate function.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>action</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>to be handled</p>
+              </div>
+            </li>
+            <li>
+              <b><code>payload</code></b>
+                  (<code><span title="typing.Any">Any</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>the payload to be passed to the handler</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>        <p>Returns:
+    The result of the handler function, if any.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="pymsgbus.exceptions.TypeNotFound">TypeNotFound</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If no action is registered for the given command or query type.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.service.Service.handle" class="doc doc-heading">
+            <code class="highlight language-python">handle(request)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Handles a request by executing the handler associated with the request type. The handler is determined by the
+generator function provided by the user.</p>
 
 
 <table class="field-list">
@@ -256,33 +413,10 @@ assert user.id == '1'
         <ul class="first simple">
             <li>
               <b><code>request</code></b>
-                  (<code><a class="autorefs autorefs-internal" title="pymsgbus.models.Command" href="../types/#pymsgbus.models.Command">Command</a> | <a class="autorefs autorefs-internal" title="pymsgbus.models.Query" href="../types/#pymsgbus.models.Query">Query</a></code>)
+                  (<code><span title="typing.Any">Any</span></code>)
               –
               <div class="doc-md-description">
-                <p>The command or query to be processed.</p>
-              </div>
-            </li>
-        </ul>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-<table class="field-list">
-  <colgroup>
-    <col class="field-name" />
-    <col class="field-body" />
-  </colgroup>
-  <tbody valign="top">
-    <tr class="field">
-      <th class="field-name">Returns:</th>
-      <td class="field-body">
-        <ul class="first simple">
-            <li>
-                  <code>None | <span title="typing.Any">Any</span></code>
-              –
-              <div class="doc-md-description">
-                <p>The result of the handler function, if any.</p>
+                <p>The request to be handled. The name of the request class is used to determine the handler to be handled</p>
               </div>
             </li>
         </ul>
@@ -302,10 +436,33 @@ assert user.id == '1'
       <td class="field-body">
         <ul class="first simple">
             <li>
-                  <code>ValueError</code>
+                  <code><span title="pymsgbus.exceptions.HandlerNotFound">HandlerNotFound</span></code>
               –
               <div class="doc-md-description">
-                <p>If no handler is registered for the given command or query type.</p>
+                <p>If no handler is registered for the given request type.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>Any</code></b>(                  <code><span title="typing.Any">Any</span></code>
+)              –
+              <div class="doc-md-description">
+                <p>The result of the handler function.</p>
               </div>
             </li>
         </ul>
@@ -328,7 +485,7 @@ assert user.id == '1'
 
     <div class="doc doc-contents ">
 
-        <p>Decorator for registering a function as a handler for a command or query type.</p>
+        <p>Decorator for registering a function as a handler for a a given request type.</p>
 
 
 <table class="field-list">
@@ -343,7 +500,7 @@ assert user.id == '1'
         <ul class="first simple">
             <li>
               <b><code>wrapped</code></b>
-                  (<code><span title="typing.Callable">Callable</span>[..., None | <span title="typing.Any">Any</span>]</code>)
+                  (<code><span title="typing.Callable">Callable</span>[..., <span title="typing.Any">Any</span>]</code>)
               –
               <div class="doc-md-description">
                 <p>The function to be registered as a handler.</p>
@@ -366,10 +523,220 @@ assert user.id == '1'
       <td class="field-body">
         <ul class="first simple">
             <li>
-                  <code><span title="typing.Callable">Callable</span>[..., None | <span title="typing.Any">Any</span>]</code>
+                  <code><span title="typing.Callable">Callable</span>[..., <span title="typing.Any">Any</span>]</code>
               –
               <div class="doc-md-description">
                 <p>The original function, unmodified.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.service.Service.on" class="doc doc-heading">
+            <code class="highlight language-python">on(exception_type)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Decorator for registering a handler for a given exception type. The handler is called when an exception of
+the given type is raised.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>exception_type</code></b>
+                  (<code>type[Exception]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The type of the exception to be handled.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              –
+              <div class="doc-md-description">
+                <p>The handler function.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.service.Service.register" class="doc doc-heading">
+            <code class="highlight language-python">register(annotation, handler)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Register a handler for a given annotation. This method is called recursively to handle nested annotations.
+Don't call this method directly, use the handler decorator instead. This method is called by the handler decorator.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>annotation</code></b>
+                  (<code><span title="typing.Any">Any</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The annotation to be registered.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>handler</code></b>
+                  (<code><span title="typing.Callable">Callable</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The handler to be registered.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.service.Service.validate" class="doc doc-heading">
+            <code class="highlight language-python">validate(type, payload)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Validate the payload associated with the given type. The type is used to determine the validator function to be used.
+The validator function defaults to the constructor of the type class. If you are using a validation library like pydantic,
+you can override the validator function to use the pydantic model_validate function.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>type</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>The type of the payload to be validated.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>payload</code></b>
+                  (<code><span title="typing.Any">Any</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The payload to be validated.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="pymsgbus.exceptions.TypeNotFound">TypeNotFound</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If no handler is registered for the given type.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              –
+              <div class="doc-md-description">
+                <p>The validated payload as an instance of the type class.</p>
               </div>
             </li>
         </ul>

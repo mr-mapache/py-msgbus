@@ -59,10 +59,6 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="" href="../callbacks.md">Callbacks</a>
-                </li>
-              </ul>
-              <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../sessions/">Unit Of Work</a>
                 </li>
               </ul>
@@ -96,7 +92,7 @@
 
 
 
-<a id="pymsgbus.producer"></a>
+<a id="pymsgbus.events"></a>
     <div class="doc doc-contents first">
 
 
@@ -119,7 +115,7 @@
 
 
 
-<h2 id="pymsgbus.producer.Consumer" class="doc doc-heading">
+<h2 id="pymsgbus.events.Consumer" class="doc doc-heading">
             <code>Consumer</code>
 
 
@@ -145,7 +141,7 @@ the event type.</p>
       </thead>
       <tbody>
             <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.producer.Consumer.register" href="#pymsgbus.producer.Consumer.register">register</a></code></td>
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.events.Consumer.register" href="#pymsgbus.events.Consumer.register">register</a></code></td>
               <td>
                 <div class="doc-md-description">
                   <p>Registers an event type and its corresponding handler function.</p>
@@ -153,7 +149,7 @@ the event type.</p>
               </td>
             </tr>
             <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.producer.Consumer.handler" href="#pymsgbus.producer.Consumer.handler">handler</a></code></td>
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.events.Consumer.handler" href="#pymsgbus.events.Consumer.handler">handler</a></code></td>
               <td>
                 <div class="doc-md-description">
                   <p>Decorator for registering a handler function for one or more event types.</p>
@@ -161,10 +157,28 @@ the event type.</p>
               </td>
             </tr>
             <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.producer.Consumer.consume" href="#pymsgbus.producer.Consumer.consume">consume</a></code></td>
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.events.Consumer.handle" href="#pymsgbus.events.Consumer.handle">handle</a></code></td>
               <td>
                 <div class="doc-md-description">
                   <p>Consumes an event by invoking its registered handler functions.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.events.Consumer.consume" href="#pymsgbus.events.Consumer.consume">consume</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Consumes an occurrence of the given event type with the given payload. This method validates the payload
+and invokes the corresponding handler functions.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.events.Consumer.listen" href="#pymsgbus.events.Consumer.listen">listen</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Register this consumer to a given producer. An event producer could be an <code>Events</code> instance or any class
+that implements the <code>Producer</code> protocol with a <code>register</code> method.</p>
                 </div>
               </td>
             </tr>
@@ -195,8 +209,8 @@ def on_user_created(event: UserCreated | UserUpdated):
 
 producer = Producer()
 producer.register(consumer)
-producer.emit(UserCreated(id='1', name='Alice'))
-producer.emit(UserUpdated(id='1', name='Bob'))
+producer.publish(UserCreated(id='1', name='Alice'))
+producer.publish(UserUpdated(id='1', name='Bob'))
 assert db['1'].name == 'Bob'
 assert nfs[0].name == 'Alice'
 assert nfs[1].name == 'Bob'
@@ -223,15 +237,148 @@ assert nfs[1].name == 'Bob'
 <div class="doc doc-object doc-function">
 
 
-<h3 id="pymsgbus.producer.Consumer.consume" class="doc doc-heading">
-            <code class="highlight language-python">consume(event)</code>
+<h3 id="pymsgbus.events.Consumer.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(name=None, cast=True, provider=None, generator=lambda name: name, validator=lambda type, payload: type(**payload))</code>
 
 </h3>
 
 
     <div class="doc doc-contents ">
 
-        <p>Consumes an event by invoking its registered handler functions.</p>
+        <p>Initializes a new instance of the Subscriber class.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code>str</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The name of the subscriber. Defaults to None.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>cast</code></b>
+                  (<code>bool</code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Casting dependencies during dependency injection. Defaults to True.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>provider</code></b>
+                  (<code><span title="pymsgbus.depends.Provider">Provider</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>. The dependency provider for dependency injection. Defaults to None.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>generator</code></b>
+                  (<code><span title="typing.Callable">Callable</span>[[str], str]</code>, default:
+                      <code>lambda name: <span title="pymsgbus.events.Consumer.name">name</span></code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The generator function for generating the handler key. Defaults to lambda name: name.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>validator</code></b>
+                  (<code><span title="typing.Callable">Callable</span>[[<span title="typing.Any">Any</span>, <span title="typing.Any">Any</span>], <span title="typing.Any">Any</span>]</code>, default:
+                      <code>lambda type, payload: type(**payload)</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The validator function for validating the payload. Defaults to lambda type, payload: type(**payload).</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.events.Consumer.consume" class="doc doc-heading">
+            <code class="highlight language-python">consume(event_type, payload)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Consumes an occurrence of the given event type with the given payload.
+This method validates the payload and invokes the corresponding handler functions.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>occurrence</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>The event type to consume.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>payload</code></b>
+                  (<code><span title="typing.Any">Any</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The event payload to consume.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.events.Consumer.handle" class="doc doc-heading">
+            <code class="highlight language-python">handle(event)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Handles an event by invoking its registered handler functions.</p>
 
 
 <table class="field-list">
@@ -249,7 +396,7 @@ assert nfs[1].name == 'Bob'
                   (<code><a class="autorefs autorefs-internal" title="pymsgbus.models.Event" href="../types/#pymsgbus.models.Event">Event</a></code>)
               –
               <div class="doc-md-description">
-                <p>The event to consume.</p>
+                <p>The event to handle.</p>
               </div>
             </li>
         </ul>
@@ -264,7 +411,7 @@ assert nfs[1].name == 'Bob'
 <div class="doc doc-object doc-function">
 
 
-<h3 id="pymsgbus.producer.Consumer.handler" class="doc doc-heading">
+<h3 id="pymsgbus.events.Consumer.handler" class="doc doc-heading">
             <code class="highlight language-python">handler(wrapped)</code>
 
 </h3>
@@ -334,7 +481,49 @@ all of those types will be registered for the given handler.</p>
 <div class="doc doc-object doc-function">
 
 
-<h3 id="pymsgbus.producer.Consumer.register" class="doc doc-heading">
+<h3 id="pymsgbus.events.Consumer.listen" class="doc doc-heading">
+            <code class="highlight language-python">listen(producer)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Registers this consumer with a given producer. An event producer could be an <code>Events</code> instance or
+any class that implements the <code>Producer</code> protocol with a <code>register</code> method.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>producer</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="pymsgbus.events.Producer" href="#pymsgbus.events.Producer">Producer</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>The producer to register this consumer with.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.events.Consumer.register" class="doc doc-heading">
             <code class="highlight language-python">register(annotation, handler)</code>
 
 </h3>
@@ -342,7 +531,8 @@ all of those types will be registered for the given handler.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Registers an event type and its corresponding handler function.</p>
+        <p>Register a handler for a given annotation. This method is called recursively to handle nested annotations.
+Don't call this method directly, use the handler decorator instead. This method is called by the handler decorator.</p>
 
 
 <table class="field-list">
@@ -357,10 +547,10 @@ all of those types will be registered for the given handler.</p>
         <ul class="first simple">
             <li>
               <b><code>annotation</code></b>
-                  (<code>type</code>)
+                  (<code><span title="typing.Any">Any</span></code>)
               –
               <div class="doc-md-description">
-                <p>The event type or Union of event types to register.</p>
+                <p>The annotation to register.</p>
               </div>
             </li>
             <li>
@@ -369,6 +559,102 @@ all of those types will be registered for the given handler.</p>
               –
               <div class="doc-md-description">
                 <p>The handler function for the event.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.events.Consumer.validate" class="doc doc-heading">
+            <code class="highlight language-python">validate(type, payload)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Validate the payload associated with the given type. The type is used to determine the validator function to be used.
+The validator function defaults to the constructor of the type class. If you are using a validation library like pydantic,
+you can override the validator function to use the pydantic model_validate function.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>type</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>The type of the payload to be validated.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>payload</code></b>
+                  (<code><span title="typing.Any">Any</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The payload to be validated.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="pymsgbus.exceptions.TypeNotFound">TypeNotFound</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If the type is not registered.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              –
+              <div class="doc-md-description">
+                <p>The validated payload as an instance of the type class.</p>
               </div>
             </li>
         </ul>
@@ -392,8 +678,8 @@ all of those types will be registered for the given handler.</p>
 
 
 
-<h2 id="pymsgbus.producer.Producer" class="doc doc-heading">
-            <code>Producer</code>
+<h2 id="pymsgbus.events.Events" class="doc doc-heading">
+            <code>Events</code>
 
 
 </h2>
@@ -401,55 +687,6 @@ all of those types will be registered for the given handler.</p>
 
     <div class="doc doc-contents ">
 
-
-        <p>A PRODUCER is a component that emits events within a BOUNDED CONTEXT. It is responsible for
-enqueue events and dispatching them to registered consumers for processing. </p>
-<p>Unlike a PUBLISHER, a producer emits events and the consumers are responsible for deciding
-wich handlers to invoke based on the event type.</p>
-
-
-<p><span class="doc-section-title">Methods:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-            <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.producer.Producer.emit" href="#pymsgbus.producer.Producer.emit">emit</a></code></td>
-              <td>
-                <div class="doc-md-description">
-                  <p>Dispatches an event to all registered consumers and processes all pending events in the queue, 
-propagating them to their respective consumers.</p>
-                </div>
-              </td>
-            </tr>
-            <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="pymsgbus.producer.Producer.register" href="#pymsgbus.producer.Producer.register">register</a></code></td>
-              <td>
-                <div class="doc-md-description">
-                  <p>Registers a consumer to receive events emitted by the producer.</p>
-                </div>
-              </td>
-            </tr>
-      </tbody>
-    </table>
-        <p>Example:</p>
-<pre><code>.. code-block:: python
-
-from pymsgbus.producer import Producer, Consumer
-
-consumer = Consumer()
-producer = Producer()
-
-...
-
-producer.register(consumer)
-producer.emit(UserCreated(id='1', name='Alice'))
-```
-</code></pre>
 
 
 
@@ -472,7 +709,7 @@ producer.emit(UserCreated(id='1', name='Alice'))
 <div class="doc doc-object doc-function">
 
 
-<h3 id="pymsgbus.producer.Producer.dequeue" class="doc doc-heading">
+<h3 id="pymsgbus.events.Events.dequeue" class="doc doc-heading">
             <code class="highlight language-python">dequeue()</code>
 
 </h3>
@@ -512,28 +749,7 @@ producer.emit(UserCreated(id='1', name='Alice'))
 <div class="doc doc-object doc-function">
 
 
-<h3 id="pymsgbus.producer.Producer.emit" class="doc doc-heading">
-            <code class="highlight language-python">emit(event)</code>
-
-</h3>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Dispatches an event to all registered consumers and processes all pending events in the queue,
-propagating them to their respective consumers.</p>
-<p>Args:</p>
-<pre><code>event (Event): _description_
-</code></pre>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-<h3 id="pymsgbus.producer.Producer.enqueue" class="doc doc-heading">
+<h3 id="pymsgbus.events.Events.enqueue" class="doc doc-heading">
             <code class="highlight language-python">enqueue(event)</code>
 
 </h3>
@@ -541,7 +757,7 @@ propagating them to their respective consumers.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Enqueues an event to be processed later by the producer.</p>
+        <p>Enqueues an event to be dispatched later to the consumers.</p>
 <p>Args:</p>
 <pre><code>event (Event): The event to enqueue.
 </code></pre>
@@ -553,7 +769,28 @@ propagating them to their respective consumers.</p>
 <div class="doc doc-object doc-function">
 
 
-<h3 id="pymsgbus.producer.Producer.register" class="doc doc-heading">
+<h3 id="pymsgbus.events.Events.handle" class="doc doc-heading">
+            <code class="highlight language-python">handle(event)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Dispatches an event to all registered consumers and processes all pending events in the queue,
+propagating them to their respective consumers.</p>
+<p>Args:</p>
+<pre><code>event (Event): The event to dispatch.
+</code></pre>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pymsgbus.events.Events.register" class="doc doc-heading">
             <code class="highlight language-python">register(consumer)</code>
 
 </h3>
@@ -569,6 +806,67 @@ propagating them to their respective consumers.</p>
     </div>
 
 </div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pymsgbus.events.Producer" class="doc doc-heading">
+            <code>Producer</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="typing.Protocol">Protocol</span></code></p>
+
+
+        <p>A PRODUCER is any components that produces events within a BOUNDED CONTEXT. A producer is responsible for
+emitting events that are consumed by consumers. Producers are generally AGGREGATEs producing DOMAIN EVENTS.
+You can implement a producer by adding an <code>Events</code> instance to your class and implementing the <code>register</code> method
+to register the consumers to the events instance.</p>
+<p>Example:</p>
+<pre><code>.. code-block:: python
+
+from pymsgbus import Consumer, Events
+
+class Aggregate:
+    def __init__(self, id: str, name: str):
+        self.id = id
+        self.name = name
+        self.events = Events()
+
+    def register(self, consumer: Consumer):
+        self.events.register(consumer)
+</code></pre>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
 
 
 
