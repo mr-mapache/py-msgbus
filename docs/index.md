@@ -3,6 +3,7 @@
 ## Table of contents:
 
 - [Introduction](#introduction)
+- [Features](#features)
 - [Instalation](#instalation)
 - [Example](#example)
 - [License](#license)
@@ -16,6 +17,8 @@ But sometimes the limitations of RESTful APIs become evident. Advanced use cases
 PyMsgbus is a library designed to simplify the creation of the service layer, implementing several messaging patterns and providing a simple and efficient way to implement message-driven systems, using FastAPI's dependency injection system cleaned from all the HTTP logic, to help you decouple your controllers and infrastructure from your business logic.
 
 This library is not meant to replace FastAPI, but to complement it, providing a way to implement a strong service layer without controllers' logic, and enabling a service agnostic transport layer.
+
+## Features
 
 This library provides:
 
@@ -99,7 +102,7 @@ def handle_put_user(command: CreateUser | UpdateUser, database = Depends(databas
 
 @consumer.handler
 def consume_user_updated(event: UserUpdated):
-    subscriber.receive('topic-1', Notification(user_id=event.id, text=f'User {event.id} updated with name {event.name}')) 
+    subscriber.receive(Notification(user_id=event.id, text=f'User {event.id} updated with name {event.name}'), 'topic-1') 
 
 @subscriber.handler('topic-1', 'topic-2')
 def on_notifications(message: Notification, notifications = Depends(notifications_dependency)):
@@ -143,8 +146,13 @@ user = service.handle(QueryUser(id='1'))
 print(user.id) # '1'
 print(user.name) #'1'
 ```
-You just created a powerful event-driven system with minimal effort. Finally let's say you want to expose your service with FastAPI.
-Create a transport layer completely decoupled from your business logic, and override the service with the one you created. 
+
+The `Service` (And `Consumer`) generates a name for each command or query (or event) depending on the class name, so you can use the `execute` method to call them, like this:
+
+```python
+service.execute('CreateUser', {'id': '1', 'name': 'John Doe'})
+```
+You can define in the `Service` constructor and add your own style like kebab-case or snake_case, or a dictionary. This is useful when you want to expose your with some transport layer like FastAPI. For example:
 
 ```python
 from fastapi import FastAPI, Depends
@@ -152,7 +160,7 @@ from pydantic import BaseModel
 from pymsgbus import Service
 
 class Command(BaseModel):
-    type: str
+    type: str # "CreateUser" for example could be "create-user"
     payload: dict
 
 class Query(BaseModel):
@@ -170,10 +178,10 @@ def handle_command(command: Command, service: Service = Depends(service)):
 
 @api.post('/queries')
 def handle_query(query: Query, service: Service = Depends(service)):
-    return service.handle(query.type, query.parameters)
+    return service.execute(query.type, query.parameters)
 ```
 
-And that's it. In just two endpoints you can have a whole interchangeable service layer exposed with as many handlers as you want Asyncio support comming soon. 
+And that's it. You just created a powerful event-driven system with minimal effort. The HTTP transport layer is completely decoupled from your business logic, and you can override the service port with the one you created later.  
 
 ## License
 
