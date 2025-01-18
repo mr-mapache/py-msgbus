@@ -9,7 +9,6 @@ nav:
   - Publisher and Subscribers: pubsub.md
   - Producers and Consumers: events.md
   - Services: services.md
-  - Callbacks: callbacks.md
   - Unit Of Work: sessions.md
 
 plugins:

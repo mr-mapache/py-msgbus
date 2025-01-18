@@ -61,11 +61,27 @@ class Subscriber:
         assert notifications == ['Hello', 'World']
     """
 
-    def __init__(self, provider: Provider = None, cast: bool = True) -> None:
-        self.handlers = dict[str, list[Callable[[Message | Any], None]]]()
+    def __init__(
+        self, 
+        name: str = None,
+        cast: bool = True,
+        provider: Provider = None, 
+    ):
+        """
+        Initializes a new instance of the Subscriber class.
+
+        Args:
+            name (str, optional): The name of the subscriber. Defaults to None.
+            cast (bool, optional): Casting dependencies during dependency injection. Defaults to True.
+            provider (Provider, optional): . The dependency provider for dependency injection. Defaults to None.
+        """
+        self.name = name
         self.provider = provider or Provider()
         self.cast = cast
-        self.key_generator = lambda name: name
+        self.handlers = dict[str, list[Callable[[Message], None]]]()
+        self.exceptions: dict[type[Exception], Callable[[Exception], None]] = {}
+        self.types = dict[str, Any]()
+    
     
     @property
     def dependency_overrides(self) -> dict:

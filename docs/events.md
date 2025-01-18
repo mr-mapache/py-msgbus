@@ -1,6 +1,6 @@
 ### Modeling domains with events, and the producer/consumer pattern.
 
-::: pymsgbus.producer
+::: pymsgbus.events
     handler: python
     options:
       show_root_heading: false

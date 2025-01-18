@@ -21,7 +21,7 @@ class User:
     id: str
     name: str
 
-service = Service()
+service = Service(cast=True)
 db = {}
 
 @service.handler
@@ -33,8 +33,8 @@ def handle_query_user(query: QueryUser) -> User: # Performs pydantic validation
     return User(id=query.id, name=db.get(query.id))
 
 def test_service():
-    service.execute(CreateUser(id='1', name='Alice'))
-    service.execute(UpdateUser(id='1', name='Bob'))
-    user = service.execute(QueryUser(id='1'))
+    service.handle(CreateUser(id='1', name='Alice'))
+    service.handle(UpdateUser(id='1', name='Bob'))
+    user = service.handle(QueryUser(id='1'))
     assert user.name == 'Bob'
     assert user.id == '1'

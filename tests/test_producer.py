@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pymsgbus import Depends
-from pymsgbus.producer import Producer, Consumer
+from pymsgbus.events import Events, Consumer
 
 @dataclass
 class UserCreated:
@@ -12,7 +12,7 @@ class UserUpdated:
     id: str
     name: str
 
-consumer = Consumer()
+consumer = Consumer(cast=True)
 
 db = {} # Database
 nfs = [] # Notification flags
@@ -23,10 +23,10 @@ def on_user_created(event: UserCreated | UserUpdated):
     nfs.append(event)
 
 def test_producer():
-    producer = Producer()
+    producer = Events()
     producer.register(consumer)
-    producer.emit(UserCreated(id='1', name='Alice'))
-    producer.emit(UserUpdated(id='1', name='Bob'))
+    producer.handle(UserCreated(id='1', name='Alice'))
+    producer.handle(UserUpdated(id='1', name='Bob'))
     assert db['1'].name == 'Bob'
     assert nfs[0].name == 'Alice'
     assert nfs[1].name == 'Bob'

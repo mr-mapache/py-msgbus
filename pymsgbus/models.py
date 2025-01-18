@@ -19,8 +19,6 @@ The types defined in this module are:
 These types are intended to be subclassed to define concrete message types with the required attributes.
 """
 
-from typing import Any
-
 class Message:
     """
     A MESSAGE represents the intention of transmitting information to the outside of
@@ -109,15 +107,7 @@ class Command:
     """
     ...
 
-    def execute(self) -> Any:
-        """
-        Execute the command. This method may be overridden in subclasses to provide
-        a default implementation for the command's execution. 
 
-        Returns:
-            Any: The result of the command execution
-        """
-        raise NotImplementedError("An `execute` method must be provided.")
 
 class Query:
     """

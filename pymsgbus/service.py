@@ -5,7 +5,7 @@ from inspect import signature
 
 from pymsgbus.depends import inject, Provider
 from pymsgbus.depends import Depends as Depends
-from pymsgbus.models import Command, Query
+from pymsgbus.exceptions import HandlerNotFound, TypeNotFound
 
 class Service:
     """
@@ -20,7 +20,7 @@ class Service:
         handler:
             Decorator for registering a function as a handler for a command or query type.
 
-        execute:
+        handle:
             Executes the handler associated with the given command or query.
 
     Example:
@@ -60,24 +60,69 @@ class Service:
         def handle_query_user(query: QueryUser) -> User: # Performs pydantic validation
             return User(id=query.id, name=db.get(query.id))
 
-        service.execute(CreateUser(id='1', name='Alice'))
-        service.execute(UpdateUser(id='1', name='Bob'))
-        user = service.execute(QueryUser(id='1'))
+        service.handle(CreateUser(id='1', name='Alice'))
+        service.handle(UpdateUser(id='1', name='Bob'))
+        user = service.handle(QueryUser(id='1'))
         assert user.name == 'Bob'
         assert user.id == '1'
     """
-    def __init__(self, provider: Provider = None, cast: bool = True) -> None:
-        self.handlers = dict[str, Callable[[Command | Query], None | Any]]()
-        self.types = dict[str, Command | Query]()
+    def __init__(
+        self, 
+        name: str = None,
+        cast: bool = True,
+        provider: Provider = None, 
+        generator: Callable[[str], str] = lambda name: name,
+        validator: Callable[[Any, Any], Any] = lambda type, payload: type(**payload)
+    ):
+        """
+        Initializes a new instance of the Subscriber class.
+
+        Args:
+            name (str, optional): The name of the subscriber. Defaults to None.
+            cast (bool, optional): Casting dependencies during dependency injection. Defaults to True.
+            provider (Provider, optional): . The dependency provider for dependency injection. Defaults to None.
+            generator (Callable[[str], str], optional): The generator function for generating the handler key. Defaults to lambda name: name.
+            validator (Callable[[Any, Any], Any], optional): The validator function for validating the payload. Defaults to lambda type, payload: type(**payload).
+        """
+        self.name = name
         self.provider = provider or Provider()
         self.cast = cast
-        self.key_generator = lambda name: name
+        self.handlers = dict[str, Callable[..., Any]]()
+        self.exceptions: dict[type[Exception], Callable[[Exception], None]] = {}
+        self.types = dict[str, Any]()
+        self.generator = generator
+        self.validator = validator
+    
+    
+    def on(self, exception_type: type[Exception]):
+        """
+        Decorator for registering a handler for a given exception type. The handler is called when an exception of
+        the given type is raised.
+
+        Args:
+            exception_type (type[Exception]): The type of the exception to be handled.
+        
+        Returns:
+            The handler function.
+        """
+        def wrapper(handler: Callable[[Any, Exception], Any]) -> bool:
+            self.exceptions[exception_type] = handler
+            return handler
+        return wrapper
 
     @property
     def dependency_overrides(self) -> dict:
         return self.provider.dependency_overrides
 
     def register(self, annotation, handler) -> None:
+        """
+        Register a handler for a given annotation. This method is called recursively to handle nested annotations.
+        Don't call this method directly, use the handler decorator instead. This method is called by the handler decorator.
+
+        Args:
+            annotation (Any): The annotation to be registered.
+            handler (Callable): The handler to be registered.
+        """
         if hasattr(annotation, '__origin__'):
             origin = getattr(annotation, '__origin__')
             if isinstance(origin, type(Union)):
@@ -90,13 +135,13 @@ class Service:
             for arg in getattr(annotation, '__args__'):
                 self.register(arg if not hasattr(arg, '__origin__') else getattr(arg, '__origin__'), handler)
         else:
-            key = self.key_generator(annotation.__name__)
+            key = self.generator(annotation.__name__)
             self.types[key] = annotation
             self.handlers[key] = inject(handler, dependency_overrides_provider=self.provider, cast=self.cast)
-    
-    def handler(self, wrapped: Callable[..., None | Any]) -> Callable[..., None | Any]:
+
+    def handler(self, wrapped: Callable[..., Any]) -> Callable[..., Any]:
         """
-        Decorator for registering a function as a handler for a command or query type.
+        Decorator for registering a function as a handler for a a given request type.
 
         Args:
             wrapped: The function to be registered as a handler.
@@ -104,26 +149,73 @@ class Service:
         Returns:
             The original function, unmodified.
         """
-        function_signature = signature(wrapped)
-        parameter = next(iter(function_signature.parameters.values()))
+        parameter = next(iter(signature(wrapped).parameters.values()))
         self.register(parameter.annotation, wrapped)
         return wrapped
     
-    def execute(self, request: Command | Query) -> None | Any:
+
+    def validate(self, type: str, payload: Any):
         """
-        Executes the handler associated with the given command or query.
+        Validate the payload associated with the given type. The type is used to determine the validator function to be used.
+        The validator function defaults to the constructor of the type class. If you are using a validation library like pydantic,
+        you can override the validator function to use the pydantic model_validate function.
 
         Args:
-            request: The command or query to be processed.
+            type (str): The type of the payload to be validated.
+            payload (Any): The payload to be validated.
 
+        Raises:
+            TypeNotFound: If no handler is registered for the given type.
+
+        Returns:
+            The validated payload as an instance of the type class.
+        """
+        if type not in self.types.keys():
+            raise TypeNotFound(f"No handler registered for type: {type}")
+        return self.validator(self.types[type], payload)
+    
+    def handle(self, request: Any) -> Any:
+        """
+        Handles a request by executing the handler associated with the request type. The handler is determined by the
+        generator function provided by the user.
+
+        Args:
+            request (Any): The request to be handled. The name of the request class is used to determine the handler to be handled
+            using the generator function provided by the user. The generator functions defaults to the name of the request class.
+
+        Raises:
+            HandlerNotFound: If no handler is registered for the given request type.
+
+        Returns:
+            Any: The result of the handler function.
+        """
+        action = self.generator(request.__class__.__name__)
+        handler = self.handlers.get(action, None)
+        if not handler:
+            raise HandlerNotFound(f"No handler registered for type: {action}")
+        try:
+            return handler(request)
+        except Exception as exception:
+            if type(exception) in self.exceptions:
+                return self.exceptions[type(exception)](request, exception)
+            else:
+                raise exception
+
+    def execute(self, action: str, payload: Any) -> Any:
+        """
+        Executes the handler associated with the given request action and it's payload. It validates the payload
+        asoociated with the action using the validator function provided by the user. The validator function defaults
+        to the constructor of the action class. If you are using a validation library like pydantic, you can override
+        the validator function to use the pydantic model_validate function.
+
+        Args:
+            action: to be handled
+            payload: the payload to be passed to the handler
         Returns:
             The result of the handler function, if any.
 
         Raises:
-            ValueError: If no handler is registered for the given command or query type.
+            TypeNotFound: If no action is registered for the given command or query type.
         """
-        key = self.key_generator(request.__class__.__name__)
-        handler = self.handlers.get(key)
-        if handler is None:
-            raise ValueError(f'No handler found for {key}')
-        return handler(request)
+        request = self.validate(action, payload)
+        return self.handle(request)
