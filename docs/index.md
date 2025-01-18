@@ -143,9 +143,8 @@ user = service.handle(QueryUser(id='1'))
 print(user.id) # '1'
 print(user.name) #'1'
 ```
-
-Finally let's say you want to create a service agnostic transport layer, and decouple your controllers
-from your business logic. You can expose a RESTful API for your commands and queries:
+You just created a powerful event-driven system with minimal effort. Finally let's say you want to expose your service with FastAPI.
+Create a transport layer completely decoupled from your business logic, and override the service with the one you created. 
 
 ```python
 from fastapi import FastAPI, Depends
@@ -174,7 +173,7 @@ def handle_query(query: Query, service: Service = Depends(service)):
     return service.handle(query.type, query.parameters)
 ```
 
-And that's it. In just two endpoints you can have a whole interchangeable service layer exposed with as many handlers as you want Asyncio support comming soon. Just override the service later with the one you create with pymsgbus.
+And that's it. In just two endpoints you can have a whole interchangeable service layer exposed with as many handlers as you want Asyncio support comming soon. 
 
 ## License
 
