@@ -43,6 +43,8 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#features">Features</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#instalation">Instalation</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#example">Example</a>
@@ -99,6 +101,7 @@
 <h2 id="table-of-contents">Table of contents:</h2>
 <ul>
 <li><a href="#introduction">Introduction</a></li>
+<li><a href="#features">Features</a></li>
 <li><a href="#instalation">Instalation</a></li>
 <li><a href="#example">Example</a></li>
 <li><a href="#license">License</a></li>
@@ -108,6 +111,7 @@
 <p>But sometimes the limitations of RESTful APIs become evident. Advanced use cases often demand more complex architectural patterns, such as CQRS or event-driven, in these scenarios, exposing resources from a database is not enough and a strong service layer is needed. This is becoming more common with the rise of IA and ML applications, where servers expose logic instead of resources.</p>
 <p>PyMsgbus is a library designed to simplify the creation of the service layer, implementing several messaging patterns and providing a simple and efficient way to implement message-driven systems, using FastAPI's dependency injection system cleaned from all the HTTP logic, to help you decouple your controllers and infrastructure from your business logic.</p>
 <p>This library is not meant to replace FastAPI, but to complement it, providing a way to implement a strong service layer without controllers' logic, and enabling a service agnostic transport layer.</p>
+<h2 id="features">Features</h2>
 <p>This library provides:</p>
 <ul>
 <li>A dependency injection system.</li>
@@ -179,7 +183,7 @@ def handle_put_user(command: CreateUser | UpdateUser, database = Depends(databas
 
 @consumer.handler
 def consume_user_updated(event: UserUpdated):
-    subscriber.receive('topic-1', Notification(user_id=event.id, text=f'User {event.id} updated with name {event.name}')) 
+    subscriber.receive(Notification(user_id=event.id, text=f'User {event.id} updated with name {event.name}'), 'topic-1') 
 
 @subscriber.handler('topic-1', 'topic-2')
 def on_notifications(message: Notification, notifications = Depends(notifications_dependency)):
@@ -217,14 +221,16 @@ user = service.handle(QueryUser(id='1'))
 print(user.id) # '1'
 print(user.name) #'1'
 </code></pre>
-<p>You just created a powerful event-driven system with minimal effort. Finally let's say you want to expose your service with FastAPI.
-Create a transport layer completely decoupled from your business logic, and override the service with the one you created. </p>
+<p>The <code>Service</code> (And <code>Consumer</code>) generates a name for each command or query (or event) depending on the class name, so you can use the <code>execute</code> method to call them, like this:</p>
+<pre><code class="language-python">service.execute('CreateUser', {'id': '1', 'name': 'John Doe'})
+</code></pre>
+<p>You can define how names are created with generator attribute in the <code>Service</code> constructor, and add your own style like kebab-case or snake_case. This is useful when you want to expose your with some transport layer like FastAPI. For example:</p>
 <pre><code class="language-python">from fastapi import FastAPI, Depends
 from pydantic import BaseModel
 from pymsgbus import Service
 
 class Command(BaseModel):
-    type: str
+    type: str # &quot;CreateUser&quot; for example could be &quot;create-user&quot;
     payload: dict
 
 class Query(BaseModel):
@@ -242,9 +248,9 @@ def handle_command(command: Command, service: Service = Depends(service)):
 
 @api.post('/queries')
 def handle_query(query: Query, service: Service = Depends(service)):
-    return service.handle(query.type, query.parameters)
+    return service.execute(query.type, query.parameters)
 </code></pre>
-<p>And that's it. In just two endpoints you can have a whole interchangeable service layer exposed with as many handlers as you want Asyncio support comming soon. </p>
+<p>And that's it. You just created a powerful event-driven system with minimal effort. The HTTP transport layer is completely decoupled from your business logic, and you can override the service port with the one you created later.  </p>
 <h2 id="license">License</h2>
 <p>This project is licensed under the terms of the MIT license. Feel free to use it in your projects.</p>
               
@@ -294,5 +300,5 @@ def handle_query(query: Query, service: Service = Depends(service)):
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-01-18 16:29:51.227861+00:00
+Build Date UTC : 2025-01-18 17:08:58.658781+00:00
 -->
