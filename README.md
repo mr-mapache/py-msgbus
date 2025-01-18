@@ -99,7 +99,7 @@ def handle_put_user(command: CreateUser | UpdateUser, database = Depends(databas
 
 @consumer.handler
 def consume_user_updated(event: UserUpdated):
-    subscriber.receive('topic-1', Notification(user_id=event.id, text=f'User {event.id} updated with name {event.name}')) 
+    subscriber.receive(Notification(user_id=event.id, text=f'User {event.id} updated with name {event.name}'), 'topic-1') 
 
 @subscriber.handler('topic-1', 'topic-2')
 def on_notifications(message: Notification, notifications = Depends(notifications_dependency)):
