@@ -63,7 +63,11 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="events/">Producers and Consumers</a>
+                <li class="toctree-l1"><a class="reference internal" href="consumers/">Producers and Consumers</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="events/">Events</a>
                 </li>
               </ul>
               <ul>
@@ -109,18 +113,22 @@
 <h2 id="introduction">Introduction</h2>
 <p>FastAPI is an excellent framework for building RESTful APIs, offering simplicity and efficiency. However, some backend applications require more sophisticated architectures to handle complex business logic. In many cases, straightforward CRUD APIs suffice, where no significant server-side logic is needed—simply exposing a repository interface through a REST controller is enough. No service layer required.</p>
 <p>But sometimes the limitations of RESTful APIs become evident. Advanced use cases often demand more complex architectural patterns, such as CQRS or event-driven, in these scenarios, exposing resources from a database is not enough and a strong service layer is needed. This is becoming more common with the rise of IA and ML applications, where servers expose logic instead of resources.</p>
-<p>PyMsgbus is a library designed to simplify the creation of the service layer, implementing several messaging patterns and providing a simple and efficient way to implement message-driven systems, using FastAPI's dependency injection system cleaned from all the HTTP logic, to help you decouple your controllers and infrastructure from your business logic.</p>
-<p>This library is not meant to replace FastAPI, but to complement it, providing a way to implement a strong service layer without controllers' logic, and enabling a service agnostic transport layer.</p>
+<p>PyMsgbus is a library designed to simplify the creation of the service layer, implementing several messaging patterns and providing a simple and efficient way to implement message-driven systems, using FastAPI's dependency injection system cleaned from all the HTTP logic, to help you decouple your controllers and infrastructure from your services.</p>
+<p>This library is not meant to replace FastAPI, but to complement it, enabling a service agnostic transport layer.
+and providing a way to implement a strong service layer without controllers logic.</p>
 <h2 id="features">Features</h2>
 <p>This library provides:</p>
 <ul>
 <li>A dependency injection system.</li>
-<li>A Publisher/Subscriber pattern for your messages.</li>
-<li>A Producer/Consumer pattern for your events.</li>
+<li>An Event bus to handle your events.</li>
+<li>A Publisher/Subscriber pattern.</li>
+<li>A Producer/Consumer pattern.</li>
 <li>A Service class to handle your commands and queries.</li>
+<li>An Exception class to handle your exceptions.</li>
 <li>A Session class to handle your transactions.</li>
 </ul>
-<p>All of them using the dependency injection system taken from FastAPI in the <a href="https://github.com/Lancetnik/FastDepends">fast-depends</a> library.</p>
+<p>All using the dependency injection system taken from FastAPI in the <a href="https://github.com/Lancetnik/FastDepends">fast-depends</a> library,
+providing a very simple way to create handlers.</p>
 <h2 id="instalation">Instalation</h2>
 <p>To install the package:</p>
 <pre><code class="language-bash">pip install pymsgbus
@@ -224,7 +232,7 @@ print(user.name) #'1'
 <p>The <code>Service</code> (And <code>Consumer</code>) generates a name for each command or query (or event) depending on the class name, so you can use the <code>execute</code> method to call them, like this:</p>
 <pre><code class="language-python">service.execute('CreateUser', {'id': '1', 'name': 'John Doe'})
 </code></pre>
-<p>You can define how names are created with generator attribute in the <code>Service</code> constructor, and add your own style like kebab-case or snake_case. This is useful when you want to expose your with some transport layer like FastAPI. For example:</p>
+<p>You can define in the <code>Service</code> constructor and add your own style like kebab-case or snake_case, or a dictionary. This is useful when you want to expose your with some transport layer like FastAPI. For example:</p>
 <pre><code class="language-python">from fastapi import FastAPI, Depends
 from pydantic import BaseModel
 from pymsgbus import Service
@@ -250,7 +258,7 @@ def handle_command(command: Command, service: Service = Depends(service)):
 def handle_query(query: Query, service: Service = Depends(service)):
     return service.execute(query.type, query.parameters)
 </code></pre>
-<p>And that's it. You just created a powerful event-driven system with minimal effort. The HTTP transport layer is completely decoupled from your business logic, and you can override the service port with the one you created later.  </p>
+<p>And that's it. You just created a powerful event-driven system with minimal effort. The HTTP transport layer is completely decoupled from your business logic, and you can override the service port with the one you created.  </p>
 <h2 id="license">License</h2>
 <p>This project is licensed under the terms of the MIT license. Feel free to use it in your projects.</p>
               
@@ -300,5 +308,5 @@ def handle_query(query: Query, service: Service = Depends(service)):
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-01-18 17:08:58.658781+00:00
+Build Date UTC : 2025-01-20 15:23:14.082602+00:00
 -->

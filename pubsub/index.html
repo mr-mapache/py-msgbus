@@ -51,7 +51,11 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../events/">Producers and Consumers</a>
+                <li class="toctree-l1"><a class="reference internal" href="../consumers/">Producers and Consumers</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../events/">Events</a>
                 </li>
               </ul>
               <ul>
@@ -127,8 +131,8 @@
 
         <p>A PUBLISHER is a component that publishes messages to a group of SUBSCRIBERS. It is
 responsible for transmitting information between components of an application. </p>
-<p>Unlike an PRODUCER, a PUBLISHER publishes messages into defined topics, which are then
-received by SUBSCRIBERS that have registered to listen to those topics.</p>
+<p>A PUBLISHER publishes messages into defined topics, which are 
+then received by SUBSCRIBERS that have registered to listen to those topics.</p>
 
 
 <p><span class="doc-section-title">Methods:</span></p>
@@ -307,7 +311,7 @@ publisher.publish('topic-2', 'World')
 
         <p>A SUBSCRIBER is a component that listens for messages published processes them accordingly.</p>
 <p>Unlike a CONSUMER, a SUBSCRIBER is responsible for processing messages based on the
-topic they were published to. It means that the publisher is responsible for deciding
+topic they were published to. It means that the PUBLISHER is responsible for deciding
 which handlers to invoke based on the topic of the message.</p>
 
 
@@ -527,6 +531,70 @@ assert notifications == ['Hello', 'World']
 <div class="doc doc-object doc-function">
 
 
+<h3 id="pymsgbus.pubsub.Subscriber.on" class="doc doc-heading">
+            <code class="highlight language-python">on(exception_type)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Decorator for registering a handler for a given exception type. The handler is called when an exception of
+the given type is raised.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>exception_type</code></b>
+                  (<code>type[Exception]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The type of the exception to be handled.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              –
+              <div class="doc-md-description">
+                <p>The handler function.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h3 id="pymsgbus.pubsub.Subscriber.receive" class="doc doc-heading">
             <code class="highlight language-python">receive(message, topic)</code>
 
@@ -685,7 +753,7 @@ to process it.</p>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../types/" class="btn btn-neutral float-left" title="Definitions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../events/" class="btn btn-neutral float-right" title="Producers and Consumers">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../consumers/" class="btn btn-neutral float-right" title="Producers and Consumers">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -711,7 +779,7 @@ to process it.</p>
       <span><a href="../types/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../events/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../consumers/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
