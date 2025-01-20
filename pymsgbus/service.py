@@ -5,6 +5,7 @@ from inspect import signature
 
 from pymsgbus.depends import inject, Provider
 from pymsgbus.depends import Depends as Depends
+from pymsgbus.exceptions import Exceptions
 from pymsgbus.exceptions import HandlerNotFound, TypeNotFound
 
 class Service:
@@ -88,10 +89,10 @@ class Service:
         self.provider = provider or Provider()
         self.cast = cast
         self.handlers = dict[str, Callable[..., Any]]()
-        self.exceptions: dict[type[Exception], Callable[[Exception], None]] = {}
         self.types = dict[str, Any]()
         self.generator = generator
         self.validator = validator
+        self.exceptions = Exceptions()
     
     
     def on(self, exception_type: type[Exception]):
@@ -106,7 +107,7 @@ class Service:
             The handler function.
         """
         def wrapper(handler: Callable[[Any, Exception], Any]) -> bool:
-            self.exceptions[exception_type] = handler
+            self.exceptions.handlers[exception_type] = handler
             return handler
         return wrapper
 
@@ -191,15 +192,10 @@ class Service:
         """
         action = self.generator(request.__class__.__name__)
         handler = self.handlers.get(action, None)
-        if not handler:
-            raise HandlerNotFound(f"No handler registered for type: {action}")
-        try:
+        with self.exceptions:
+            if not handler:
+                raise HandlerNotFound(f"No handler registered for type: {action}")
             return handler(request)
-        except Exception as exception:
-            if type(exception) in self.exceptions:
-                return self.exceptions[type(exception)](request, exception)
-            else:
-                raise exception
 
     def execute(self, action: str, payload: Any) -> Any:
         """

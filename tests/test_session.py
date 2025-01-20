@@ -8,7 +8,7 @@ def update_db(e):
     return True
 
 def rollback_db(e):
-    pass
+    return False
 
 class UOW:
     def __init__(self):
@@ -45,12 +45,13 @@ def test_sessions():
 
 
     resource = UOW()
-    with Session(resource) as session:
-        assert resource.started == True
-        session.on(KeyError)(lambda e: rollback_db(e))
-        raise KeyError('test')
-    assert resource.commited == False # Since the exception was handled with negative or none result
-    assert resource.closed == True
+    with raises(KeyError):
+        with Session(resource) as session:
+            assert resource.started == True
+            session.on(KeyError)(lambda e: rollback_db(e))
+            raise KeyError('test')
+        assert resource.commited == False # Since the exception was handled with negative or none result
+        assert resource.closed == True
     
     with raises(KeyError):
         resource = UOW()

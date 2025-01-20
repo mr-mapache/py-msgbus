@@ -14,21 +14,24 @@ FastAPI is an excellent framework for building RESTful APIs, offering simplicity
 
 But sometimes the limitations of RESTful APIs become evident. Advanced use cases often demand more complex architectural patterns, such as CQRS or event-driven, in these scenarios, exposing resources from a database is not enough and a strong service layer is needed. This is becoming more common with the rise of IA and ML applications, where servers expose logic instead of resources.
 
-PyMsgbus is a library designed to simplify the creation of the service layer, implementing several messaging patterns and providing a simple and efficient way to implement message-driven systems, using FastAPI's dependency injection system cleaned from all the HTTP logic, to help you decouple your controllers and infrastructure from your business logic.
+PyMsgbus is a library designed to simplify the creation of the service layer, implementing several messaging patterns and providing a simple and efficient way to implement message-driven systems, using FastAPI's dependency injection system cleaned from all the HTTP logic, to help you decouple your controllers and infrastructure from your services.
 
-This library is not meant to replace FastAPI, but to complement it, providing a way to implement a strong service layer without controllers' logic, and enabling a service agnostic transport layer.
-
+This library is not meant to replace FastAPI, but to complement it, enabling a service agnostic transport layer.
+and providing a way to implement a strong service layer without controllers logic.
 ## Features
 
 This library provides:
 
 - A dependency injection system.
-- A Publisher/Subscriber pattern for your messages.
-- A Producer/Consumer pattern for your events.
+- An Event bus to handle your events.
+- A Publisher/Subscriber pattern.
+- A Producer/Consumer pattern.
 - A Service class to handle your commands and queries.
+- An Exception class to handle your exceptions.
 - A Session class to handle your transactions.
 
-All of them using the dependency injection system taken from FastAPI in the [fast-depends](https://github.com/Lancetnik/FastDepends) library.
+All using the dependency injection system taken from FastAPI in the [fast-depends](https://github.com/Lancetnik/FastDepends) library,
+providing a very simple way to create handlers.
 
 ## Instalation
 
@@ -181,7 +184,7 @@ def handle_query(query: Query, service: Service = Depends(service)):
     return service.execute(query.type, query.parameters)
 ```
 
-And that's it. You just created a powerful event-driven system with minimal effort. The HTTP transport layer is completely decoupled from your business logic, and you can override the service port with the one you created later.  
+And that's it. You just created a powerful event-driven system with minimal effort. The HTTP transport layer is completely decoupled from your business logic, and you can override the service port with the one you created.  
 
 ## License
 

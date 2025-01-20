@@ -20,6 +20,7 @@ from typing import Callable
 from typing import Optional
 from logging import getLogger
 from inspect import signature
+from pymsgbus.exceptions import Exceptions
 
 logger = getLogger(__name__)
 
@@ -110,20 +111,20 @@ class Session:
             *args: Variable length argument list with resource instances.
         """
         self.resources = args
-        self.handler: dict[type[BaseException], Callable[[Optional[BaseException]], bool]] = {}
+        self.exceptions = Exceptions()
 
-    def on(self, exception: type[BaseException]) -> Callable:
+    def on(self, exception: type[Exception]) -> Callable:
         """
         Registers an exception handler for the given exception type.
 
         Args:
-            exception: The type of exception to handle.
+            exception (Exception): The type of exception to handle.
 
         Returns:
             A decorator that registers the exception handler.
         """
-        def decorator(handler: Callable[[Optional[BaseException]], bool]):
-            self.handler[exception] = handler
+        def decorator(handler: Callable[..., bool]):
+            self.exceptions.handlers[exception] = handler
         return decorator
 
     def __enter__(self):
@@ -146,24 +147,9 @@ class Session:
             traceback (Any): The traceback object.
 
         """
+        commit = True
         if exc_type:
-            result = False
-            commit = False
-            if exc_type in self.handler:
-                result = True
-                try:
-                    handler_signature = signature(self.handler[exc_type])
-                    if len(handler_signature.parameters) == 0:
-                        commit = self.handler[exc_type]()
-                    else:
-                        commit = self.handler[exc_type](exc_value)
-                except Exception as error:
-                    logger.error(f"Error while handling exception: {error}")
-                    commit = False
-                    result = False
-        else:
-            result = True
-            commit = True
+            commit = self.exceptions.handle(exc_type, exc_value, traceback)
 
         if commit:
             for resource in self.resources:
@@ -174,7 +160,7 @@ class Session:
 
         for resource in self.resources:
             resource.close()
-        return result
+        return commit
     
     def commit(self) -> bool:
         """

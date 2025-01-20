@@ -5,6 +5,7 @@ from typing import Protocol
 from pymsgbus.depends import inject, Provider
 from pymsgbus.depends import Depends as Depends
 from pymsgbus.models import Message
+from pymsgbus.exceptions import Exceptions
         
 class Publisher(Protocol):
     
@@ -16,7 +17,7 @@ class Subscriber:
     A SUBSCRIBER is a component that listens for messages published processes them accordingly.
 
     Unlike a CONSUMER, a SUBSCRIBER is responsible for processing messages based on the
-    topic they were published to. It means that the publisher is responsible for deciding
+    topic they were published to. It means that the PUBLISHER is responsible for deciding
     which handlers to invoke based on the topic of the message.
 
     Methods:
@@ -79,8 +80,8 @@ class Subscriber:
         self.provider = provider or Provider()
         self.cast = cast
         self.handlers = dict[str, list[Callable[[Message], None]]]()
-        self.exceptions: dict[type[Exception], Callable[[Exception], None]] = {}
         self.types = dict[str, Any]()
+        self.exceptions = Exceptions()
     
     
     @property
@@ -124,7 +125,8 @@ class Subscriber:
             message (Message | Any): The message to process.
         """
         for handler in self.handlers.get(topic, []):
-            handler(message)
+            with self.exceptions:
+                handler(message)
     
     def subscribe(self, publisher: Publisher):
         """
@@ -135,13 +137,29 @@ class Subscriber:
         """
         publisher.register(self)
 
+    def on(self, exception_type: type[Exception]):
+        """
+        Decorator for registering a handler for a given exception type. The handler is called when an exception of
+        the given type is raised.
+
+        Args:
+            exception_type (type[Exception]): The type of the exception to be handled.
+        
+        Returns:
+            The handler function.
+        """
+        def wrapper(handler: Callable[[Any, Exception], Any]) -> bool:
+            self.exceptions.handlers[exception_type] = handler
+            return handler
+        return wrapper
+
 class Publisher:
     """
     A PUBLISHER is a component that publishes messages to a group of SUBSCRIBERS. It is
     responsible for transmitting information between components of an application. 
 
-    Unlike an PRODUCER, a PUBLISHER publishes messages into defined topics, which are then
-    received by SUBSCRIBERS that have registered to listen to those topics.
+    A PUBLISHER publishes messages into defined topics, which are 
+    then received by SUBSCRIBERS that have registered to listen to those topics.
 
     Methods:
         publish:

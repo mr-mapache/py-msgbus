@@ -7,7 +7,8 @@ nav:
   - Home: index.md
   - Definitions: types.md
   - Publisher and Subscribers: pubsub.md
-  - Producers and Consumers: events.md
+  - Producers and Consumers: consumers.md
+  - Events: events.md
   - Services: services.md
   - Unit Of Work: sessions.md
 
