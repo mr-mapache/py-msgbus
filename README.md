@@ -1,5 +1,7 @@
 # Welcome to PyMsgbus
 
+This library is under development and it's features will be extracted from the [torchsystem](https://github.com/mr-mapache/torch-system) and some fastapi backends I'm building. The idea is to create a general purpose framework for building event driven systems. 
+
 ## Table of contents:
 
 - [Introduction](#introduction)
