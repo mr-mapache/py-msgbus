@@ -183,8 +183,4 @@ def handle_query(query: Query, service: Service = Depends(service)):
     return service.execute(query.type, query.parameters)
 ```
 
-And that's it. You just created a powerful event-driven system with minimal effort. The HTTP transport layer is completely decoupled from your business logic, and you can override the service port with the one you created later.  
-
-## License
-
-This project is licensed under the terms of the MIT license. Feel free to use it in your projects.
+And that's it. You just created a powerful event-driven system with minimal effort. The HTTP transport layer is completely decoupled from your business logic, and you can override the service port with the one you created later. 
